@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<DevRes>
+	<Translations>
+		<Res id="Employees" tr="Employees"/>
+      <Res id="Teams" tr="Teams"/>
+      <Res id="Projects" tr="Projects"/>
+      <Res id="Project" tr="Project"/>
+      <Res id="Search" tr="Search"/>
+      <Res id="Statistics" tr="Statistics"/>
+      <Res id="Tickets" tr="Tickets"/>
+      <Res id="Ticket" tr="Ticket"/>
+      <Res id="OpFile" tr="Open File"/>
+      <Res id="Cancel" tr="Cancel"/>
+      
+      
+		<Res id="Save" tr="Snimi"/>
+      
+      <Res id="App" tr="App"/>
+      <Res id="Control" tr="Control"/>
+      <Res id="Recap" tr="Recap"/>
+      <Res id="Requests" tr="Requests"/>
+	</Translations>
+</DevRes>

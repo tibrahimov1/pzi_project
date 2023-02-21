@@ -1,0 +1,32 @@
+<?xml version='1.0'?>
+<DevRes>
+	<Translations>
+		<Res id="Employees" tr="Uposlenici"/>
+      <Res id="Teams" tr="Timovi"/>
+      <Res id="Projects" tr="Projekti"/>
+      <Res id="Project" tr="Projekt"/>
+      <Res id="Search" tr="Pretraga"/>
+      <Res id="Statistics" tr="Statistika"/>
+      <Res id="Ticket" tr="Tiket"/>
+      <Res id="Tickets" tr="Tiketi"/>
+      <Res id="OpFile" tr="Otvori file"/>
+      <Res id="Cancel" tr="Izadi"/>
+		<Res id="Save" tr="Snimi"/>
+      <Res id="App" tr="Aplikacija"/>
+      <Res id="Control" tr="Kontrola"/>
+      <Res id="Recap" tr="Pregled"/>
+      <Res id="Requests" tr="Zahtjevi"/>
+      
+      
+      <Res id="ProjName" tr="Ime projekta:"/>
+      <Res id="ManName" tr="Project Manager:"/>
+      <Res id="Finish" tr="Završen:"/>
+      <Res id="Date" tr="Datum početka:"/>
+      <Res id="FinDate" tr="Datum završetka:"/>
+      <Res id="Pnum" tr="Broj ljudi:"/>
+      <Res id="Prog" tr="Progres"/>
+      <Res id="Spec" tr="Specifikacija:"/>
+      <Res id="NewProj" tr="Novi projekat"/>
+
+	</Translations>
+</DevRes>
