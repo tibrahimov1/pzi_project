@@ -1,4 +1,9 @@
 #pragma once
+//Ovaj bi trebao mijenjati izmedju pojedinih nivoa CEO PM i User
+//Demonstriran je primjer za CEO i PM i kako koristiti
+//Poslije Dialog Logina poziva se callback koji je proslijedjen
+//prilikom inicijalizacije dialog logina i upravlja
+//mainswitcherom koji na kraju odabira pogled na osnovu globals varijable.
 #include <gui/ViewSwitcher.h>
 #include "NavigatorView.h"
 #include "ViewProj.h"
@@ -18,6 +23,9 @@ public:
 	}
 	void showCEO() {
 		showView(0);
+	}
+	void showPM() {
+		showView(1);
 	}
 	
 };

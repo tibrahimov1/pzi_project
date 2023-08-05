@@ -18,5 +18,9 @@ public:
 	{
 		_mainSW.showCEO();
 	}
+	void showPM()
+	{
+		_mainSW.showPM();
+	}
 
 };

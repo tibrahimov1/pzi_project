@@ -49,7 +49,11 @@ protected:
         showLogin();
     }
     void setView() {
-        _initView.showCEO(); //for now only change to CEO
+        if (Globals::_currentUserID == 1)
+            _initView.showCEO(); //for now only change to CEO
+        else
+            _initView.showPM();
+        
     }
 
     void MainWindow::showLogin()
