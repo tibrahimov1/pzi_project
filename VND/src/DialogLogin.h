@@ -6,6 +6,8 @@
 #include "../../common/include/VNDLib.h"
 #include <functional>
 
+//td::INT4 Globals::_currentUserID = -1;
+
 class VND_LIB_API DialogLogin : public gui::Dialog
 {
 	ViewLogin _viewLogin;

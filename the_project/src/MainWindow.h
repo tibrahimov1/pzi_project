@@ -8,6 +8,8 @@
 #include "../../VND/src/DialogLogin.h"
 #include "../../VND/src/ViewProj.h"
 #include "../../VND/src/InitView.h"
+#include "../../common/include/Globals.h"
+td::INT4 Globals::_currentUserID = -1;
 
 class MainWindow : public gui::Window
 {
@@ -51,8 +53,9 @@ protected:
     void setView() {
         if (Globals::_currentUserID == 1)
             _initView.showCEO(); //for now only change to CEO
-        else
-            _initView.showPM();
+        else if(Globals::_currentUserID == 3)
+            _initView.showUser();
+            
         
     }
 

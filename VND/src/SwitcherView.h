@@ -12,7 +12,7 @@ class SwitcherView : public gui::ViewSwitcher
 private:
 protected:
     ViewProj _viewProj;
-
+  
 
 public:
     SwitcherView()
