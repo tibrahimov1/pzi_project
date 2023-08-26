@@ -14,7 +14,7 @@
 #include <cnt/StringBuilder.h>
 //#include <gui/Types.h>
 
-class VND_LIB_API ViewDialogProj : public gui::View
+class VND_LIB_API ViewDialogTeam : public gui::View
 {
 protected:
 	gui::Label _name;
@@ -30,7 +30,7 @@ protected:
 	td::String _filename;
 
 public:
-	ViewDialogProj() :
+	ViewDialogTeam() :
 		_gl(4, 2) //zbog spacinga 
 		, _name(tr("NewProj"))
 		, _spec(tr("Spec"))

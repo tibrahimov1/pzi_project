@@ -8,6 +8,8 @@
 #include <gui/NumericEdit.h>
 #include <gui/ProgressIndicator.h>
 #include <gui/Button.h>
+#include <dp/IDatabase.h>
+#include <dp/IDataSet.h>
 
 #include "../../common/include/VNDLib.h"
 #include <gui/TableEdit.h>
@@ -19,11 +21,11 @@ protected:
 	gui::Label _name;
 	gui::LineEdit _Ename; //edit name
 
-	gui::Label _manName;
-	gui::LineEdit _Eman;
+	//gui::Label _manName;
+	//gui::LineEdit _Eman;
 
-	gui::Label _finish;
-	gui::ComboBox _Cfinish; //combo finish
+	//gui::Label _finish;
+	//gui::ComboBox _Cfinish; //combo finish
 
 	gui::Label _date;
 	gui::DateEdit _Ddate; //date edit date
@@ -40,7 +42,7 @@ protected:
 	gui::Label _spec;
 	gui::Button _btnFile;
 
-	gui::Button _btnProj;
+	//gui::Button _btnProj;
 	gui::TableEdit _te;
 
 	dp::IDatabase *_db;
