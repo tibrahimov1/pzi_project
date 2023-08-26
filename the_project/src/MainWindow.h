@@ -9,6 +9,7 @@
 #include "../../VND/src/ViewProj.h"
 #include "../../VND/src/InitView.h"
 #include "../../common/include/Globals.h"
+
 td::INT4 Globals::_currentUserID = -1;
 
 class MainWindow : public gui::Window
@@ -51,12 +52,19 @@ protected:
         showLogin();
     }
     void setView() {
+
         if (Globals::_currentUserID == 1)
             _initView.showCEO(); //for now only change to CEO
-        else if(Globals::_currentUserID == 3)
+        else if (Globals::_currentUserID == 2) {
+            _initView.showPM();
+            //_toolBar.hide(true);
+            //NewToolBar mak();
+            //setToolBar(mak);
+            //mak.show(true);
+        }
+        else {
             _initView.showUser();
-            
-        
+        }
     }
 
     void MainWindow::showLogin()

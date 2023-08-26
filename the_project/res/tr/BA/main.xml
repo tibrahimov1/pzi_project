@@ -28,7 +28,5 @@
       <Res id="Spec" tr="Specifikacija:"/>
       <Res id="NewProj" tr="Novi projekat"/>
 
-      <Res id="EndGet" tr="Završi/Zaduži"/>
-      <Res id="Difficulty" tr="Težina:"/>
 	</Translations>
 </DevRes>
