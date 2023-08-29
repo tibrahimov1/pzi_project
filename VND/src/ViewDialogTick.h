@@ -90,7 +90,7 @@ public:
 	}
 	void populateCombo() {
 		dp::IStatementPtr pStat(dp::getMainDatabase()->createStatement("SELECT ID, Ime, Opis"
-			" FROM Tim"));
+			" FROM Tim WHERE Tim.ID!=-1"));
 		dp::Columns cols(pStat->allocBindColumns(3));
 		td::String name, opis;
 		td::INT4 ID;

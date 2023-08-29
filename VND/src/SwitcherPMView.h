@@ -28,6 +28,7 @@ public:
     void refresh(td::INT4 arg) {
         Globals::_currentUserID = arg;
         _viewTick.populateData(1);
+        _viewTeam.populateData(1);
     }
 
 };

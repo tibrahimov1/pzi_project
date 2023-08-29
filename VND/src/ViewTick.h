@@ -49,6 +49,8 @@ protected:
 	dp::IDatabase* _db;
 	dp::IDataSet* _pDS = nullptr;
 	std::vector<td::INT4> _ticksToUpdate, _ticksToDelete, _ticksToInsert;
+	std::vector<std::vector<td::INT4>> _dodaj1;
+	std::vector<td::String> _dodaj2;
 	std::vector<cnt::SafeFullVector<td::Variant,false>> _sviRedovi;
 public:
 	ViewTick();

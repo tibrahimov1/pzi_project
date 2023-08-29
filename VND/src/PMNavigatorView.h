@@ -29,6 +29,7 @@ public:
 	{
 		td::UINT2 currSelection = pNav->getCurrentSelection();
 		_switcherPM.showView((int)currSelection);
+		_switcherPM.refresh(Globals::_currentUserID);
 		return true;
 	}
 };

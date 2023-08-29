@@ -16,95 +16,75 @@
 
 class VND_LIB_API ViewDialogTeam : public gui::View
 {
-protected:
-	gui::Label _name;
-	gui::GridLayout _gl;
-	gui::LineEdit _Ename;
-	gui::Label _spec;
-	gui::Button _btnFile;
-	gui::Label _date;
-	gui::DateEdit _Ddate;
-	gui::Label _man;
-	gui::DBComboBox _Cman;
+	//////////////////////////////////
+	protected:
+		gui::Label _name;
+		gui::LineEdit _Nname;
+		gui::Label _opis;
+		gui::LineEdit _Oopis;
 
-	td::String _filename;
-
+		gui::GridLayout _gl;
 public:
 	ViewDialogTeam() :
-		_gl(4, 2) //zbog spacinga 
-		, _name(tr("NewProj"))
-		, _spec(tr("Spec"))
-		, _btnFile(tr("OpFile"))
-		, _date(tr("date"))
-		, _man(tr("ManName"))
-		, _Cman(td::int4)
+		_gl(2, 2) //zbog spacinga 
+		, _name(tr("Naziv"))
+		, _opis(tr("Opis"))
 	{
 		gui::GridComposer gc(_gl);
 		gc.appendRow(_name);
-		gc.appendCol(_Ename, -1);
-		gc.appendRow(_spec);
-		gc.appendCol(_btnFile, -1);
-		gc.appendRow(_date);
-		gc.appendCol(_Ddate, -1);
-		gc.appendRow(_man);
-		gc.appendCol(_Cman, -1);
-		gc.appendEmptyCols(2);
+		gc.appendCol(_Nname, -1);
+		gc.appendRow(_opis);
+		gc.appendCol(_Oopis, -1);
 		gui::View::setLayout(&_gl);
-		populateCombo();
 	}
-	td::Date getDate() const {
-		td::Variant v;
-		_Ddate.getValue(v);
-		return v.dateVal();
-	}
-	td::INT4 getID() const {
-		td::Variant v;
-		_Cman.getValue(v);
-		return v.i4Val();
-	}
-	td::String getFileName() const {
-		return _filename;
-	}
-	td::String getName() const {
-		td::Variant v;
-		_Ename.getValue(v);
-		return v.strVal();
-	}
-	bool onClick(gui::Button* pBtn) override {
-		//openfile handle
-		if (pBtn == &_btnFile) {
-			gui::OpenFileDialog* s = new gui::OpenFileDialog(this, "Open file", {});
-			s->openModal(DlgID::FileSelect, this);
+
+	bool spasi() {
+		td::INT4 ID, ProjekatID=-1, BrClanova=0;
+		td::String Opis, Ime;
+		dp::IStatementPtr pSelect1 = dp::getMainDatabase()->createStatement("SELECT MAX(ID)+1 as ID FROM Tim");
+		dp::Columns cols1 = pSelect1->allocBindColumns(1);
+
+		cols1 << "ID" << ID;
+
+		if (!pSelect1->execute())
+			return false;
+		pSelect1->moveNext();
+
+		dp::IStatementPtr pInsertItem(dp::getMainDatabase()->createStatement("insert into Tim(ID, BrClanova, Ime, Opis, ProjekatID) values(?,?,?,?,?)"));
+		dp::Params pParams2(pInsertItem->allocParams());
+		
+		td::Variant val;
+		_Nname.getValue(val);
+		Ime = val.strVal();
+
+		_Oopis.getValue(val);
+		Opis = val.strVal();
+		
+		pParams2 << ID << BrClanova << dp::toNCh(Ime,100) << dp::toNCh(Opis,100) << ProjekatID;
+
+		if (!pInsertItem->execute())
+		{
+			return false;
 		}
 
-		td::String fileName;
+
+		/*dp::IDataSet* pDS = _te.getDataSet();
+		auto rowCnt = pDS->getNumberOfRows();
+		for (size_t iRow = 0; iRow < rowCnt; ++iRow)
+		{
+			auto& row = pDS->getRow(iRow);
+			id = row[0].i4Val();
+			if (std::find(_ticksToInsert.begin(), _ticksToInsert.end(), id) == _ticksToInsert.end())//this item is not marked to insert, go next
+				continue;
+			ProjekatId = row[1].i4Val();
+			VlasnikId = row[2].i4Val();
+			Opis = row[3];
+
+			if (!pInsertItem->execute())
+			{
+				return false;
+			}
+		}*/
 		return true;
 	}
-	bool onClick(gui::FileDialog* pDlg, td::UINT4 dlgID)
-	{
-		if ((DlgID)dlgID == DlgID::FileSelect)
-		{
-			if (pDlg->getStatus() == gui::FileDialog::Status::OK)
-			{
-				_filename = pDlg->getFileName();
-			}
-		}
-		return false;
-	}
-	void populateCombo() {
-		dp::IStatementPtr pStat(dp::getMainDatabase()->createStatement("SELECT ID, Ime, Prezime"
-			" FROM Korisnik"
-			" WHERE TipID=2"));
-		dp::Columns cols(pStat->allocBindColumns(3));
-		td::String name, lastname;
-		td::INT4 ID;
-		cols << "ID" << ID << "Ime" << name << "Prezime" << lastname;
-		if (!pStat->execute()) return;
-		while (pStat->moveNext()) {
-			cnt::StringBuilderSmall sb();
-
-			_Cman.addItem(name, ID); //NE ZNAM SABRAT STRINGOVE
-		}
-		_Cman.selectIndex(0);
-	};
 };

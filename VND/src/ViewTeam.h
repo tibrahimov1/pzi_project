@@ -34,6 +34,8 @@ protected:
 	dp::IDatabase* _db1;
 	dp::IDataSet* _pDS1 = nullptr;
 	std::vector<td::INT4> _projectsToUpdate;
+	
+
 public:
 	ViewTeam();
 	bool onClick(gui::Button* pBtn) override;
@@ -41,7 +43,7 @@ public:
 	void populateDSRow(dp::IDataSet::Row& row);
 	bool onChangedSelection(gui::TableEdit* pTe) override;
 	td::INT4 getIDfromTable(int rowID);
-	void populateData();
+	void populateData(td::INT4 type);
 
 
 };
