@@ -20,3 +20,9 @@ UserNavigatorView::UserNavigatorView():
 void UserNavigatorView::refresh(td::INT4 arg) { //arg is currentuserid
 	_switcherUser.refresh(arg);
 }
+bool UserNavigatorView::onChangedSelection(gui::Navigator* pNav)
+{
+	td::UINT2 currSelection = pNav->getCurrentSelection();
+	_switcherUser.onChangedView((int)currSelection);
+	return true;
+}

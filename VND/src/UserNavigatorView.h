@@ -19,4 +19,5 @@ protected:
 public:
 	UserNavigatorView();
 	void refresh(td::INT4 arg);
+	bool onChangedSelection(gui::Navigator* pNav);
 };
