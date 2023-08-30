@@ -2,7 +2,6 @@
 #include <gui/View.h>
 #include "MainSwitcher.h"
 #include "gui/HorizontalLayout.h"
-#include "../../common/include/Globals.h"
 class InitView : public gui::View 
 {
 	MainSwitcher _mainSW;

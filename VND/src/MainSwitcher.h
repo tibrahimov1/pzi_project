@@ -6,25 +6,31 @@
 //mainswitcherom koji na kraju odabira pogled na osnovu globals varijable.
 #include <gui/ViewSwitcher.h>
 #include "NavigatorView.h"
-#include "ViewProj.h"
 #include "UserNavigatorView.h"
+#include "PMNavigatorView.h"
 #include "../../common/include/Globals.h"
-
+#include "ViewProj.h"
 class  VND_LIB_API MainSwitcher : public gui::ViewSwitcher
 {
 	NavigatorView _viewNav;
-	ViewProj _viewProj;
+	PMNavigatorView _viewPM;
 	UserNavigatorView _viewUser;
+	//ViewProj _viewProj;
+	//ViewTeam _viewTeam;
+	//ViewTick _viewTick;
+	
 public:
 	MainSwitcher():
 		gui::ViewSwitcher(3) //CEO,PM,Employee
 		, _viewNav()
-		, _viewProj()
+		, _viewPM()
 		, _viewUser()
+		//, _viewTick()
 	{
 		addView(&_viewNav);
-		addView(&_viewProj);
+		addView(&_viewPM);
 		addView(&_viewUser);
+		//addView(&_viewTick);
 		showView(1); //select the starting view here
 	}
 	void showCEO() {
@@ -32,9 +38,10 @@ public:
 	}
 	void showPM() {
 		showView(1);
+		_viewPM.refresh(Globals::_currentUserID);
 	}
 	void showUser() {
 		showView(2);
-		_viewUser.refresh(Globals::_currentUserID); //ovo ce da rijesi login problem, postavit ce na vrijendost userida
+		_viewUser.refresh(Globals::_currentUserID);
 	}
 };

@@ -12,7 +12,7 @@ class SwitcherView : public gui::ViewSwitcher
 private:
 protected:
     ViewProj _viewProj;
-  
+    ViewTeam _viewTeam;
 
 public:
     SwitcherView()
@@ -20,6 +20,6 @@ public:
 
     {
         addView(&_viewProj, true);
-
+        addView(&_viewTeam, true);
     }
 };

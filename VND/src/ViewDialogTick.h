@@ -14,61 +14,58 @@
 #include <cnt/StringBuilder.h>
 //#include <gui/Types.h>
 
-class VND_LIB_API ViewDialogProj : public gui::View
+class VND_LIB_API ViewDialogTick : public gui::View
 {
 protected:
-	gui::Label _name;
 	gui::GridLayout _gl;
-	gui::LineEdit _Ename;
-	gui::Label _spec;
+	gui::Label _tim;
+	gui::DBComboBox _Ctim;
+	gui::Label _dokum;
 	gui::Button _btnFile;
-	gui::Label _date;
-	gui::DateEdit _Ddate;
-	gui::Label _man;
-	gui::DBComboBox _Cman;
+	gui::Label _tezina;
+	gui::NumericEdit _Dtezina;
 
 	td::String _filename;
 
 public:
-	ViewDialogProj() :
-		_gl(4, 2) //zbog spacinga 
-		, _name(tr("NewProj"))
-		, _spec(tr("Spec"))
-		, _btnFile(tr("OpFile"))
-		, _date(tr("date"))
-		, _man(tr("ManName"))
-		, _Cman(td::int4)
+	ViewDialogTick() :
+		_gl(3, 2) //zbog spacinga 
+		, _tim(tr("Team"))
+		, _dokum(tr("Document"))
+		, _btnFile(tr("Open File Dialog"))
+		, _Ctim(td::int4)
+		, _tezina(tr("Tezina"))
+		, _Dtezina(td::int4)
 	{
 		gui::GridComposer gc(_gl);
-		gc.appendRow(_name);
-		gc.appendCol(_Ename, -1);
-		gc.appendRow(_spec);
+		gc.appendRow(_tim);
+		gc.appendCol(_Ctim, -1);
+		gc.appendRow(_dokum);
 		gc.appendCol(_btnFile, -1);
-		gc.appendRow(_date);
-		gc.appendCol(_Ddate, -1);
-		gc.appendRow(_man);
-		gc.appendCol(_Cman, -1);
+		gc.appendRow(_tezina);
+		gc.appendCol(_Dtezina, -1);
 		gc.appendEmptyCols(2);
 		gui::View::setLayout(&_gl);
 		populateCombo();
 	}
-	td::Date getDate() const {
+	td::String getImeTima() const {
 		td::Variant v;
-		_Ddate.getValue(v);
-		return v.dateVal();
+		_Ctim.getValue(v);
+		auto konj = _Ctim.getSelectedText();
+		return konj;
 	}
 	td::INT4 getID() const {
 		td::Variant v;
-		_Cman.getValue(v);
+		_Ctim.getValue(v);
 		return v.i4Val();
 	}
 	td::String getFileName() const {
 		return _filename;
 	}
-	td::String getName() const {
+	td::INT4 getTezina() const {
 		td::Variant v;
-		_Ename.getValue(v);
-		return v.strVal();
+		_Dtezina.getValue(v);
+		return v.i4Val();
 	}
 	bool onClick(gui::Button* pBtn) override {
 		//openfile handle
@@ -92,19 +89,18 @@ public:
 		return false;
 	}
 	void populateCombo() {
-		dp::IStatementPtr pStat(dp::getMainDatabase()->createStatement("SELECT ID, Ime, Prezime"
-			" FROM Korisnik"
-			" WHERE TipID=2"));
+		dp::IStatementPtr pStat(dp::getMainDatabase()->createStatement("SELECT ID, Ime, Opis"
+			" FROM Tim WHERE Tim.ID!=-1"));
 		dp::Columns cols(pStat->allocBindColumns(3));
-		td::String name, lastname;
+		td::String name, opis;
 		td::INT4 ID;
-		cols << "ID" << ID << "Ime" << name << "Prezime" << lastname;
+		cols << "ID" << ID << "Ime" << name<< "Opis"<<opis;
 		if (!pStat->execute()) return;
 		while (pStat->moveNext()) {
 			cnt::StringBuilderSmall sb();
 
-			_Cman.addItem(name, ID); //NE ZNAM SABRAT STRINGOVE
+			_Ctim.addItem(name, ID); //NE ZNAM SABRAT STRINGOVE
 		}
-		_Cman.selectIndex(0);
+		_Ctim.selectIndex(0);
 	};
 };
