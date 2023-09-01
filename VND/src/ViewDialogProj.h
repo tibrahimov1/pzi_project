@@ -12,6 +12,7 @@
 #include <gui/GridLayout.h>
 #include <td/Date.h>
 #include <cnt/StringBuilder.h>
+//#include <gui/Types.h>
 
 class VND_LIB_API ViewDialogProj : public gui::View
 {
@@ -30,21 +31,21 @@ protected:
 
 public:
 	ViewDialogProj() :
-	_gl(4,2) //zbog spacinga 
-	,_name(tr("NewProj"))
-	,_spec(tr("Spec"))
-	,_btnFile(tr("OpFile"))
-	,_date(tr("date"))
-	,_man(tr("ManName"))
-	,_Cman(td::int4)
+		_gl(4, 2) //zbog spacinga 
+		, _name(tr("NewProj"))
+		, _spec(tr("Spec"))
+		, _btnFile(tr("OpFile"))
+		, _date(tr("date"))
+		, _man(tr("ManName"))
+		, _Cman(td::int4)
 	{
 		gui::GridComposer gc(_gl);
 		gc.appendRow(_name);
 		gc.appendCol(_Ename, -1);
 		gc.appendRow(_spec);
-		gc.appendCol(_btnFile,-1);
+		gc.appendCol(_btnFile, -1);
 		gc.appendRow(_date);
-		gc.appendCol(_Ddate,-1);
+		gc.appendCol(_Ddate, -1);
 		gc.appendRow(_man);
 		gc.appendCol(_Cman, -1);
 		gc.appendEmptyCols(2);
@@ -64,7 +65,7 @@ public:
 	td::String getFileName() const {
 		return _filename;
 	}
-	td::String getName() const{
+	td::String getName() const {
 		td::Variant v;
 		_Ename.getValue(v);
 		return v.strVal();
@@ -72,7 +73,7 @@ public:
 	bool onClick(gui::Button* pBtn) override {
 		//openfile handle
 		if (pBtn == &_btnFile) {
-			gui::OpenFileDialog* s = new gui::OpenFileDialog(this, "Open file",{});
+			gui::OpenFileDialog* s = new gui::OpenFileDialog(this, "Open file", {});
 			s->openModal(DlgID::FileSelect, this);
 		}
 
@@ -97,13 +98,13 @@ public:
 		dp::Columns cols(pStat->allocBindColumns(3));
 		td::String name, lastname;
 		td::INT4 ID;
-		cols <<"ID"<<ID << "Ime" << name << "Prezime" << lastname;
+		cols << "ID" << ID << "Ime" << name << "Prezime" << lastname;
 		if (!pStat->execute()) return;
 		while (pStat->moveNext()) {
 			cnt::StringBuilderSmall sb();
-			
-			_Cman.addItem( name, ID); //NE ZNAM SABRAT STRINGOVE
+
+			_Cman.addItem(name, ID); //NE ZNAM SABRAT STRINGOVE
 		}
 		_Cman.selectIndex(0);
-	}
+	};
 };

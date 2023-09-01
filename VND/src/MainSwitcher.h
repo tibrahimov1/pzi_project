@@ -6,6 +6,9 @@
 //mainswitcherom koji na kraju odabira pogled na osnovu globals varijable.
 #include <gui/ViewSwitcher.h>
 #include "NavigatorView.h"
+#include "UserNavigatorView.h"
+#include "PMNavigatorView.h"
+#include "../../common/include/Globals.h"
 #include "ViewProj.h"
 #include "UserNavigatorView.h"
 #include "../../common/include/Globals.h"
@@ -32,9 +35,10 @@ public:
 	}
 	void showPM() {
 		showView(1);
+		_viewPM.refresh(Globals::_currentUserID);
 	}
 	void showUser() {
 		showView(2);
-		_viewUser.refresh(Globals::_currentUserID); //ovo ce da rijesi login problem, postavit ce na vrijendost userida
+		_viewUser.refresh(Globals::_currentUserID);
 	}
 };

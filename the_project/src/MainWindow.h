@@ -51,12 +51,26 @@ protected:
         showLogin();
     }
     void setView() {
+
         if (Globals::_currentUserID == 1)
             _initView.showCEO(); //for now only change to CEO
+<<<<<<< HEAD
         else if(Globals::_currentUserID == 3)
             _initView.showUser();
             
         
+=======
+        else if (Globals::_currentUserID == 2) {
+            _initView.showPM();
+            //_toolBar.hide(true);
+            //NewToolBar mak();
+            //setToolBar(mak);
+            //mak.show(true);
+        }
+        else {
+            _initView.showUser();
+        }
+>>>>>>> 44cf9c61d818d0fc0fcb8baae6eadb3e7915f9eb
     }
 
     void MainWindow::showLogin()

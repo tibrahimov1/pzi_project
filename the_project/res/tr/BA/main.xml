@@ -38,10 +38,13 @@
       <Res id="NewReq" tr="Novi zahtjev"/>
       <Res id="Request" tr="Zahtjev:"/>
 
+<<<<<<< HEAD
       <Res id="TickName" tr="Tiket:"/>
       <Res id="Team" tr="Tim:"/>
       <Res id="TeamName" tr="Tim:"/>
       <Res id="Description" tr="Opis:"/>
       <Res id="Document" tr="Dokument:"/>
+=======
+>>>>>>> 44cf9c61d818d0fc0fcb8baae6eadb3e7915f9eb
 	</Translations>
 </DevRes>
