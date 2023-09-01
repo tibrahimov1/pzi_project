@@ -10,27 +10,24 @@
 #include "PMNavigatorView.h"
 #include "../../common/include/Globals.h"
 #include "ViewProj.h"
+#include "UserNavigatorView.h"
+#include "../../common/include/Globals.h"
+
 class  VND_LIB_API MainSwitcher : public gui::ViewSwitcher
 {
 	NavigatorView _viewNav;
-	PMNavigatorView _viewPM;
+	ViewProj _viewProj;
 	UserNavigatorView _viewUser;
-	//ViewProj _viewProj;
-	//ViewTeam _viewTeam;
-	//ViewTick _viewTick;
-	
 public:
 	MainSwitcher():
 		gui::ViewSwitcher(3) //CEO,PM,Employee
 		, _viewNav()
-		, _viewPM()
+		, _viewProj()
 		, _viewUser()
-		//, _viewTick()
 	{
 		addView(&_viewNav);
-		addView(&_viewPM);
+		addView(&_viewProj);
 		addView(&_viewUser);
-		//addView(&_viewTick);
 		showView(1); //select the starting view here
 	}
 	void showCEO() {
