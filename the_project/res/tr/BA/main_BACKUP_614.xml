@@ -18,7 +18,6 @@
       <Res id="Requests" tr="Zahtjevi"/>
       
       
-      
       <Res id="ProjName" tr="Ime projekta:"/>
       <Res id="ManName" tr="Project Manager:"/>
       <Res id="Finish" tr="Završen:"/>
@@ -29,6 +28,7 @@
       <Res id="Spec" tr="Specifikacija:"/>
       <Res id="NewProj" tr="Novi projekat"/>
 
+<<<<<<< HEAD
       <Res id="EndGet" tr="Završi/Zaduži"/>
       <Res id="Difficulty" tr="Težina:"/>
 
@@ -38,10 +38,7 @@
       <Res id="NewReq" tr="Novi zahtjev"/>
       <Res id="Request" tr="Zahtjev:"/>
 
-      <Res id="TickName" tr="Tiket:"/>
-      <Res id="Team" tr="Tim:"/>
-      <Res id="TeamName" tr="Tim:"/>
-      <Res id="Description" tr="Opis:"/>
-      <Res id="Document" tr="Dokument:"/>
+=======
+>>>>>>> Makov
 	</Translations>
 </DevRes>

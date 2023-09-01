@@ -7,18 +7,24 @@
 #include <gui/ViewSwitcher.h>
 #include "NavigatorView.h"
 #include "ViewProj.h"
+#include "UserNavigatorView.h"
+#include "../../common/include/Globals.h"
+
 class  VND_LIB_API MainSwitcher : public gui::ViewSwitcher
 {
 	NavigatorView _viewNav;
 	ViewProj _viewProj;
+	UserNavigatorView _viewUser;
 public:
 	MainSwitcher():
 		gui::ViewSwitcher(3) //CEO,PM,Employee
 		, _viewNav()
 		, _viewProj()
+		, _viewUser()
 	{
 		addView(&_viewNav);
 		addView(&_viewProj);
+		addView(&_viewUser);
 		showView(1); //select the starting view here
 	}
 	void showCEO() {
@@ -27,5 +33,8 @@ public:
 	void showPM() {
 		showView(1);
 	}
-	
+	void showUser() {
+		showView(2);
+		_viewUser.refresh(Globals::_currentUserID); //ovo ce da rijesi login problem, postavit ce na vrijendost userida
+	}
 };
