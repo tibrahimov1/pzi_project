@@ -10,7 +10,7 @@
 ViewTeam::ViewTeam() :
 	_gl(3,6)
 	,_teamName(tr("TeamName"))
-	,_desc("Description")
+	,_desc(tr("Description"))
 	,_Hlbtn(3)
 	,_btnList("Lista ljudi")
 	,_btnNew("Novi tim")
