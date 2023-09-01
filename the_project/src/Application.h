@@ -24,7 +24,8 @@ public:
         mu::getHomePath(home);
 
         //fo::fs::path DBPath = (home / "other_bin/TestData/SQLite/PoS.db");
-        fo::fs::path DBPath = (home / "Work/PZI_Baza/Baza_proj.db");
+        //fo::fs::path DBPath = (home / "Work/PZI_Baza/Baza_proj.db");
+        fo::fs::path DBPath = (home / "Work/PZI_Baza/Baza_v2.db");
         if (!pDB->connect(DBPath.string().c_str()))
             return false;
 

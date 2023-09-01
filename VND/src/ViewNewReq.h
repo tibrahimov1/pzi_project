@@ -35,7 +35,7 @@ public:
 	}
 	bool storetoDB() {
 		dp::IDatabasePtr _db = dp::getMainDatabase();
-		dp::IStatementPtr hstat = _db->createStatement("SELECT b.ProjektID "
+		dp::IStatementPtr hstat = _db->createStatement("SELECT b.ProjekatID "
 			" FROM Korisnik a, Tim b "
 			" WHERE a.ID = ? AND a.TimID = b.ID"
 		);
@@ -43,7 +43,7 @@ public:
 		param << Globals::_currentUserID;
 		dp::Columns cols(hstat->allocBindColumns(1));
 		td::INT4 projektID;
-		cols << "ProjektID" << projektID;
+		cols << "ProjekatID" << projektID;
 		if (!hstat->execute())
 			return false;
 		if (!hstat->moveNext())
@@ -66,14 +66,14 @@ public:
 
 
 
-		dp::IStatementPtr kstat = _db->createStatement("SELECT a.ID  "
-			"FROM Zahtjevi a"		);
+		dp::IStatementPtr kstat = _db->createStatement("SELECT ID "
+			"FROM Zahtjevi"		);
 		dp::Columns kcols(kstat->allocBindColumns(1));
 		td::INT4 reqID;
 		kcols << "ID" << reqID;
-		if (!lstat->execute())
+		if (!kstat->execute())
 			return false;
-		while (!lstat->moveNext())
+		while (kstat->moveNext())
 		{ }
 
 
@@ -84,7 +84,9 @@ public:
 		dp::Params newparams (pstat->allocParams());
 		td::Variant var;
 		_sreq.getValue(var);
-		newparams << td::Variant(td::INT4(reqID + 1)) << Globals::_currentUserID << manID << dp::toNCh(var, 40) << td::DateTime::Time() << td::Variant(0);
+		td::Date datum;
+		datum.now();
+		newparams << td::Variant(td::INT4(reqID + 1)) << Globals::_currentUserID << manID << dp::toNCh(var, 40) << datum << td::Variant(0);
 		if (!pstat->execute())
 			return false;
 		return true;

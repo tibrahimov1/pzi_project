@@ -61,7 +61,8 @@ void ViewReqUser::populateData() {
 		return;
 	}
 	_te.init(_pDs, {2, 3, 0, 4, 5});
-	onChangedSelection(&_te);
+	if (_pDs->getNumberOfRows() > 0)
+		onChangedSelection(&_te);
 }
 bool ViewReqUser::onChangedSelection(gui::TableEdit* pTe) {
 

@@ -77,7 +77,7 @@ void ViewTickUser::populateData() {
 			"WHEN a.Stanje = 2 THEN 'Zavrsen' "
 			"ELSE 'Neispravan' "
 			"END AS Status "
-			"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND a.ProjekatID = c.ProjektID AND b.TimID = c.ID AND b.TipID = 3");
+			"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND a.ProjekatID = c.ProjekatID AND b.TimID = c.ID AND b.TipID = 3");
 		dp::DSColumns cols(_pDS->allocBindColumns(5));
 		cols << "ID" << td::int4 << "Stanje" << td::int4 << "Tezina" << td::int4 << "Opis" << td::string8 << "Status" << td::string8;
 		if (!_pDS->execute())
@@ -128,7 +128,7 @@ bool ViewTickUser::onClick(gui::Button* pBtn) {
 				"WHEN a.Stanje = 2 THEN 'Zavrsen' "
 				"ELSE 'Neispravan' "
 				"END AS Status "
-				"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND a.ProjekatID = c.ProjektID AND b.TimID = c.ID AND b.TipID = 3");
+				"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND a.ProjekatID = c.ProjekatID AND b.TimID = c.ID AND b.TipID = 3");
 			dp::DSColumns cols(_pDS->allocBindColumns(5));
 			cols << "ID" << td::int4 << "Stanje" << td::int4 << "Tezina" << td::int4 << "Opis" << td::string8 << "Status" << td::string8;
 			if (!_pDS->execute())
