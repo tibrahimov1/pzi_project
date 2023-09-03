@@ -27,6 +27,27 @@
       <Res id="Prog" tr="Progres"/>
       <Res id="Spec" tr="Specifikacija:"/>
       <Res id="NewProj" tr="Novi projekat"/>
+	  
+	  <Res id="EndGet" tr="Završi/Zaduži"/>
+      <Res id="Difficulty" tr="Težina:"/>
 
+      <Res id="towards" tr="Prima:"/>
+      <Res id="rDate" tr="Datum:"/>
+      <Res id="Status" tr="Status:"/>
+      <Res id="NewReq" tr="Novi zahtjev"/>
+      <Res id="Request" tr="Zahtjev:"/>
+
+      <Res id="TickName" tr="Tiket:"/>
+      <Res id="Team" tr="Tim:"/>
+      <Res id="TeamName" tr="Tim:"/>
+      <Res id="Description" tr="Opis:"/>
+      <Res id="Document" tr="Dokument:"/>
+	  
+	  <Res id="AddTick" tr="Dodaj tiket:"/>
+	  <Res id="Discard" tr="Ponisti"/>
+	  <Res id="Delete" tr="Obrisi"/>
+	  <Res id="ListOfPeople" tr="Lista ljudi"/>
+	  <Res id="NewTeam" tr="Novi Tim"/>
+      <Res id="NewTick" tr="Novi Tiket"/>	  
 	</Translations>
 </DevRes>
