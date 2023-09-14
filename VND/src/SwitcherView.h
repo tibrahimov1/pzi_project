@@ -2,7 +2,7 @@
 #include <gui/ViewSwitcher.h>
 #include "ViewEmpl.h"
 #include "ViewProj.h"
-#include "ViewSrch.h"
+#include "ViewZah.h"
 #include "ViewTick.h"
 #include "ViewTeam.h"
 #include "ViewStat.h"

@@ -36,6 +36,8 @@
       <Res id="Status" tr="Status:"/>
       <Res id="NewReq" tr="Novi zahtjev"/>
       <Res id="Request" tr="Zahtjev:"/>
+	  <Res id="ReqAnswer" tr="Odgovor"/>
+	  <Res id="BurndownStatistics" tr="Burndown statistika"/>
 
       <Res id="TickName" tr="Tiket:"/>
       <Res id="Team" tr="Tim:"/>
@@ -48,6 +50,7 @@
 	  <Res id="Delete" tr="Obrisi"/>
 	  <Res id="ListOfPeople" tr="Lista ljudi"/>
 	  <Res id="NewTeam" tr="Novi Tim"/>
-      <Res id="NewTick" tr="Novi Tiket"/>	  
+      <Res id="NewTick" tr="Novi Tiket"/>	
+      <Res id="Burndown Graph" tr="Burndown grafik"/>	  
 	</Translations>
 </DevRes>

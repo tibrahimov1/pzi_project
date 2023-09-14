@@ -11,29 +11,33 @@
 #include <gui/HorizontalLayout.h>
 #include <gui/DBComboBox.h>
 
-#include <gui/Canvas.h>
-#include <gui/Shape.h>
-#include <math/math.h>
-#include <gui/Image.h>
-#include <gui/Symbol.h>
-
 #include "../../common/include/VNDLib.h"
 #include <gui/TableEdit.h>
-
-#include "ViewGrafik.h"
-class VND_LIB_API ViewStat : public gui::View
+class VND_LIB_API ViewZah : public gui::View
 {
 protected:
 	gui::GridLayout _gl;
 
-	gui::Label _tim;
-	gui::DBComboBox _Ttim; //combo finish
+	gui::Label _prima;
+	gui::LineEdit _Pprima; //edit name
 
-	gui::Button _btnGraf;
+	gui::Label _zahtjev;
+	gui::LineEdit _Zzahtjev; //combo finish
 
-	ViewGrafik _Graf;
+	gui::Label _dat;
+	gui::LineEdit _Ddat;
+
+	gui::Label _status;
+	gui::LineEdit _Dstat; //date edit date
+
+	gui::Button _btnZah;
+	gui::Button _btnOdg;
+	gui::HorizontalLayout _Hlbtn;
+	//gui::Button _btnUc;
 	//gui::Label _statnaz;
 	//gui::DBComboBox _Status;
+	gui::TableEdit _te;
+	gui::TableEdit _pomocni;
 
 	dp::IDatabase* _db;
 	dp::IDataSet* _pDS = nullptr;
@@ -43,9 +47,17 @@ protected:
 	std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi;
 	int pomocnaa = 1;
 public:
-	ViewStat();
+	ViewZah();
 	bool onClick(gui::Button* pBtn) override;
-	bool onChangedSelection(gui::DBComboBox* combo) override;
 	void populateComboBox(gui::DBComboBox& cmb, td::String naziv);
+	void populateDSRow(dp::IDataSet::Row& row);
+	bool onChangedValue(gui::DateEdit* dEdit) override;
+	virtual bool onChangedSelection(gui::TableEdit* pTE);
+	td::INT4 getIDfromTable(int rowID);
 	void populateData(td::INT4 type);
+	bool canAdd();
+	bool eraseTicks();
+	bool insertTicks();
+	bool updateTicks();
+	bool saveData();
 };

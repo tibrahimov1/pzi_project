@@ -354,12 +354,12 @@ public:
 		}
 		else if (pBtn == &_btnUkloni) {
 			int iRow = _te.getFirstSelectedRow();
-			td::INT4 DelID = getIDfromTable(iRow);
+			
 
 			if (iRow < 0)
 				return true;
 
-			
+			td::INT4 DelID = getIDfromTable(iRow);
 			dp::IDataSet* pDS = _te.getDataSet();
 			auto& row = pDS->getRow(iRow);
 			td::String naziv = row[0].getConstStr();
