@@ -18,6 +18,7 @@
       <Res id="App" tr="App"/>
       <Res id="Control" tr="Control"/>
       <Res id="Recap" tr="Recap"/>
-      <Res id="Requests" tr="Requests"/>
+	  <Res id="Requests" tr="Requests"/>
+     
 	</Translations>
 </DevRes>

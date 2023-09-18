@@ -89,6 +89,13 @@ public:
 				return false;
 			pSelect1->moveNext();
 
+			if (ID1 == -1) {
+				row[4] = 0;
+				_te->insertRow(i);
+				_te->endUpdate();
+				continue;
+			}
+
 			td::Date datum;
 			datum.now();
 			td::INT4 dan, mjesec, god;
@@ -96,9 +103,7 @@ public:
 			mjesec = (dat - dan * 1000000) / 10000;
 			god = dat % 10000;
 			td::Date datum1(god, mjesec, dan);
-			td::Date razlika;
-			razlika = datum - datum1;
-			td::INT4 brojDana = razlika.getNoOfDays();
+			td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 
 			dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
 			dp::Params pParamss(pSelectt->allocParams());

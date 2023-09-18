@@ -342,7 +342,11 @@ public:
 			_te.endUpdate();
 
 			//_PeopleToInsert.erase(std::remove(_itemsToUpdate.begin(), _itemsToUpdate.end(), itemid), _itemsToUpdate.end());
-			_PeopleToInsert.push_back(itemid);
+			if (_PeopleToDelete.size() != 0 && std::find(_PeopleToDelete.begin(), _PeopleToDelete.end(), itemid) != std::end(_PeopleToDelete)) {
+				auto mjesto = std::find(_PeopleToDelete.begin(), _PeopleToDelete.end(), itemid);
+				_PeopleToDelete.erase(mjesto);
+			}
+			else _PeopleToInsert.push_back(itemid);
 			auto poz = _Korisnici.getSelectedIndex();
 			_Korisnici.removeItem(poz);
 			_Korisnici.selectIndex(0);
@@ -350,12 +354,12 @@ public:
 		}
 		else if (pBtn == &_btnUkloni) {
 			int iRow = _te.getFirstSelectedRow();
-			td::INT4 DelID = getIDfromTable(iRow);
+			
 
 			if (iRow < 0)
 				return true;
 
-			
+			td::INT4 DelID = getIDfromTable(iRow);
 			dp::IDataSet* pDS = _te.getDataSet();
 			auto& row = pDS->getRow(iRow);
 			td::String naziv = row[0].getConstStr();
@@ -367,7 +371,11 @@ public:
 			_te.removeRow(iRow);
 			_te.endUpdate();
 
-			_PeopleToDelete.push_back(DelID);
+			if (_PeopleToInsert.size() != 0 && std::find(_PeopleToInsert.begin(), _PeopleToInsert.end(), DelID) != std::end(_PeopleToInsert)) {
+				auto mjesto = std::find(_PeopleToInsert.begin(), _PeopleToInsert.end(), DelID);
+				_PeopleToInsert.erase(mjesto);
+			}
+			else _PeopleToDelete.push_back(DelID);
 
 
 			return true;

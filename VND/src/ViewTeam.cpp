@@ -12,8 +12,8 @@ ViewTeam::ViewTeam() :
 	,_teamName(tr("TeamName"))
 	,_desc(tr("Description"))
 	,_Hlbtn(3)
-	,_btnList("Lista ljudi")
-	,_btnNew("Novi tim")
+	,_btnList(tr("ListOfPeople"))
+	,_btnNew(tr("NewTeam"))
 	,_db1(dp::getMainDatabase())
 {
 	_Hlbtn.appendSpacer();
@@ -40,7 +40,7 @@ bool ViewTeam::onClick(gui::Button* pBtn) {
 	if (pBtn == &_btnList) {
 		DialogListaLjudi* p = new DialogListaLjudi(this, &_te);
 		p->openModal(DlgID::NewProj, this);
-		p->setTitle(tr("NewListaLjudi"));
+		p->setTitle(tr("ListOfPeople"));
 	}
 	else if (pBtn == &_btnNew) {
 		DialogTeam* p = new DialogTeam(this, &_te);
@@ -123,6 +123,15 @@ void ViewTeam::populateData(td::INT4 type) {
 	//_te.init(_pDS1, { 0,1,2});
 	if (type == 0) {
 		_te.init(_pDS1, { 1,3,4,5,6,7 });
+
+		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi;
+
+		dp::IDataSet* pDS = _te.getDataSet();
+		for (size_t i = 0; i < pDS->getNumberOfRows(); ++i)
+		{
+			auto& row = pDS->getRow(i);
+			_sviRedovi.push_back(row);
+		}
 		return;
 	}
 	
@@ -164,7 +173,9 @@ void ViewTeam::populateData(td::INT4 type) {
 
 		if (ID1 == -1) {
 			row[4] = 0;
-			break;
+			_te.insertRow(i);
+			_te.endUpdate();
+			continue;
 		}
 		
 		td::Date datum;
@@ -174,9 +185,7 @@ void ViewTeam::populateData(td::INT4 type) {
 		mjesec = (dat - dan * 1000000) / 10000;
 		god = dat % 10000;
 		td::Date datum1(god,mjesec,dan);
-		td::Date razlika;
-		razlika = datum - datum1;
-		td::INT4 brojDana = razlika.getNoOfDays();
+		td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 
 		dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
 		dp::Params pParamss(pSelectt->allocParams());

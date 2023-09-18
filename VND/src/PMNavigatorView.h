@@ -17,6 +17,8 @@ protected:
 	gui::Image _imgProg;
 	gui::Image _imgTeam;
 	gui::Image _imgTick;
+	gui::Image _imgZah;
+	gui::Image _imgStat;
 public:
 	PMNavigatorView();
 	void refresh(td::INT4 arg);

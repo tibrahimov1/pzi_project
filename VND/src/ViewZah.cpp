@@ -1,60 +1,48 @@
 #pragma once
-#include "ViewTick.h"
+#include "ViewZah.h"
 #include "gui/FileDialog.h"
 #include <dp/IDatabase.h>
-#include "DialogTick.h"
+#include "DialogZah.h"
 #include "../../common/include/Globals.h"
-ViewTick::ViewTick() :
-	_gl(4, 6)
-	, _tiket(tr("TickName"))
-	, _Ntiket(td::int4)
-	, _tim(tr("Team"))
-	, _dok(tr("Document"))
+ViewZah::ViewZah() :
+	_gl(4, 4)
+	, _prima(tr("towards"))
+	, _zahtjev(tr("Request"))
+	, _dat(tr("rDate"))
+	//, _Ddat(td::int4)
 	, _status(tr("Status"))
-	, _tezina(tr("Difficulty"))
-	, _Dtezina(td::int4)
 	//, _btnDok("<path>")
-	, _btnTik(tr("AddTick"))
-	, _Ttim(td::int4)
-	, _Hlbtn(4)
-	, _btnSac(tr("Save"))
 	//, _btnUc("Ucitaj")
-	, _btnPon(tr("Discard"))
-	, _btnDel(tr("Delete"))
+	, _btnZah(tr("NewReq"))
+	, _btnOdg(tr("ReqAnswer"))
+	, _Hlbtn(3)
 	//, _statnaz("Status")
 	//, _Status(td::int4)
 	, _db(dp::getMainDatabase())
 {
-	_Hlbtn.append(_btnSac);
-	//_Hlbtn.append(_btnUc);
-	_Hlbtn.append(_btnPon);
-	_Hlbtn.append(_btnDel);
-	//_Hlbtn.appendSpacer();
-	//_Hlbtn.append(_statnaz);
-	//_Hlbtn.append(_Status);
+	_Hlbtn.appendSpacer();
+	_Hlbtn.append(_btnZah);
+	_Hlbtn.append(_btnOdg);
+
+
 
 	gui::GridComposer gc(_gl);
-	gc.appendRow(_tiket);
-	gc.appendCol(_Ntiket);
-	gc.appendCol(_tim);
-	gc.appendCol(_Ttim);
-	gc.appendCol(_dok);
-	gc.appendCol(_btnDok);
+	gc.appendRow(_prima);
+	gc.appendCol(_Pprima);
+	gc.appendCol(_zahtjev);
+	gc.appendCol(_Zzahtjev);
 
-	gc.appendRow(_status);
+	gc.appendRow(_dat);
+	gc.appendCol(_Ddat);
+	gc.appendCol(_status);
 	gc.appendCol(_Dstat);
-	gc.appendCol(_tezina);
-	gc.appendCol(_Dtezina);
-	gc.appendEmptyCols(1);
-	gc.appendCol(_btnTik);
 
+	gc.appendRow(_Hlbtn, 0);
 
 	gc.appendRow(_te, 0);
 
-	gc.appendRow(_Hlbtn,0);
-
 	gui::View::setLayout(&_gl);
-	populateComboBox(_Ttim, "SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1");
+	//populateComboBox(_Ttim, "SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1");
 	//populateComboBox1(_Status,"SELECT DISTINCT CASE WHEN Stanje = 0 THEN 'Nije zavrsen' ELSE 'Zavrsen' END as Name FROM Tiketi");
 	//_Status.addItem("Zavrsen", 0);
 	//_Status.addItem("Nije završen", 1);
@@ -63,7 +51,7 @@ ViewTick::ViewTick() :
 	//setaasreadonly
 }
 
-void ViewTick::populateComboBox(gui::DBComboBox& cmb,td::String naziv) {
+void ViewZah::populateComboBox(gui::DBComboBox& cmb, td::String naziv) {
 	dp::IStatementPtr pSelect = _db->createStatement(naziv.c_str());
 	dp::Columns pCols = pSelect->allocBindColumns(2);
 	td::String name;
@@ -80,108 +68,90 @@ void ViewTick::populateComboBox(gui::DBComboBox& cmb,td::String naziv) {
 }
 
 
-bool ViewTick::onClick(gui::Button* pBtn) {
-	
-	if (pBtn == &_btnTik) {
-		DialogTick* p = new DialogTick(this,&_te,&_dodaj1,&_dodaj2, &_ticksToInsert);
+bool ViewZah::onClick(gui::Button* pBtn) {
+
+	if (pBtn == &_btnZah) {
+		DialogZah* p = new DialogZah(this, &_te);
 		p->openModal(DlgID::NewTick, this);
-		p->setTitle(tr("NewTick"));
-
-
-		//Ovo radi ali prvo se izvrsi ovo sto ne zelim pa je to belaj velik
-		/*int iRow = _te.getFirstSelectedRow();
-		if (iRow < 0)
-			iRow = 0;
-		if (!canAdd())
-			return true;
-		_te.beginUpdate();
-		auto& row = _te.getEmptyRow();
-		td::Variant val;
-		row[0].setValue(p->dajID());
-		row[1].setValue(p->dajIDTima());
-		row[2].setValue(p->dajImeTIma());
-		row[3].setValue(p->dajStanje());
-		row[4].setValue(p->dajTezinu());
-		row[5].setValue(p->dajOpis());
-		//populateDSRow(row);
-		_te.insertRow(iRow);
-		_te.endUpdate();
-		*/
+		p->setTitle(tr("NewReq"));
 	}
-	else if (pBtn == &_btnSac) {
-		saveData();
-		return true;
-	}
-	else if (pBtn == &_btnPon) {
-		//zbog nekog razloga samo pojede ono sto je bilo, ne znam zasto trebalo bi normalno da radi
-		_te.reload();
-		
-		
-		for (size_t i = 0; i < _sviRedovi.size(); ++i)
+	else if (pBtn == &_btnOdg) {
+		int iRow = _te.getFirstSelectedRow();
+		dp::IDataSet* pDS = _te.getDataSet();
+		auto& row = pDS->getRow(iRow);
+		dp::IStatementPtr pInsertItem(dp::getMainDatabase()->createStatement("update Zahtjevi SET Status=1 WHERE ID=?"));
+		dp::Params pParams2(pInsertItem->allocParams());
+		pParams2 << row[5];
+
+		if (!pInsertItem->execute())
 		{
-			_te.beginUpdate();
-			auto& row = _te.getEmptyRow();
-			row[0] = _sviRedovi[i][0];
-			row[1] = _sviRedovi[i][1];
-			row[2] = _sviRedovi[i][2];
-			row[3] = _sviRedovi[i][3];
-			row[4] = _sviRedovi[i][4];
-			row[5] = _sviRedovi[i][5];
-			_te.insertRow(i);
-			_te.endUpdate();
-			//_te.insertRow(row);
+			return false;
 		}
 
+		gui::TableEdit _te1;
+
+		_pDS = (_db->createDataSet("SELECT k.ID as ID, k.Ime || ' ' || k.Prezime as 'Ime i prezime', Cast(z.Datum/1000000 AS Varchar(255)) || '/' || Cast((z.Datum-(z.Datum/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(z.Datum%10000 AS Varchar(255)) As Datum, z.Opis as Zahtjev, CASE WHEN z.Status=0 THEN 'Neodgovoren' ELSE 'Odgovoren' END as Status, z.ID as ID1 FROM Korisnik k, Zahtjevi z where k.ID=z.SenderID and z.ReceiverID=?"));
+		dp::Params pParams1(_pDS->allocParams());
+		pParams1 << Globals::_currentUserID;
+
+		//OVO SAM IMAO PRVOBITNO ------- and t.VlasnikID=a.MenadzerID
+
+		dp::DSColumns cols(_pDS->allocBindColumns(6));
+		td::String Name, Zahtjev, Status, Datum1;
+		td::INT4 ID, Datum, ID1;
+		//ovdje ima sila popravki                                        
+		cols << "ID" << ID << "Ime i prezime" << Name << "Datum" << Datum1 << "Zahtjev" << Zahtjev << "Status" << Status << "ID1" << ID1;
+		if (!_pDS->execute())
+		{
+			_pDS = nullptr;
+			return false;
+		}
+
+		_te1.init(_pDS, { 1,2,3,4 });
+
+		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi11;
+
+		dp::IDataSet* pDS2 = _te1.getDataSet();
+		for (size_t i = 0; i < pDS2->getNumberOfRows(); ++i)
+		{
+			auto& row1 = pDS2->getRow(i);
+			_sviRedovi11.push_back(row1);
+		}
+		_te.reload();
+		for (int i = 0; i < _sviRedovi11.size(); i++) {
+			_te.beginUpdate();
+			auto& row1 = _te.getEmptyRow();
+			row1[0] = _sviRedovi11[i][0];
+			row1[1] = _sviRedovi11[i][1];
+			row1[2] = _sviRedovi11[i][2];
+			row1[3] = _sviRedovi11[i][3];
+			row1[4] = _sviRedovi11[i][4];
+			row1[5] = _sviRedovi11[i][5];
+			_te.insertRow(i);
+			_te.endUpdate();
+		}
 		
-		_ticksToDelete.clear();
-		_ticksToInsert.clear();
-		_ticksToUpdate.clear();
-		_dodaj1.clear();
-		_dodaj2.clear();
-		pomocnaa = 0;
 		return true;
 	}
-	/*else if (pBtn == &_btnUc) {
-
-	}*/
-	else if (pBtn == &_btnDel) {
-		int iRow = _te.getFirstSelectedRow();
-		td::INT4 TickID = getIDfromTable(iRow);
-		if (iRow < 0)
-			return true;
-		_te.beginUpdate();
-		_te.removeRow(iRow);
-		_te.endUpdate();
-
-		_ticksToDelete.push_back(TickID);
-		//kada brisemo neki item, ako smo ga ranije dodali ili azurirali i nije spaseno u bazu, nemoj ga spasiti u bazu
-		_ticksToInsert.erase(std::remove(_ticksToInsert.begin(), _ticksToInsert.end(), TickID), _ticksToInsert.end());
-		_ticksToUpdate.erase(std::remove(_ticksToUpdate.begin(), _ticksToUpdate.end(), TickID), _ticksToUpdate.end());
-		return true;
-	}
-	/*else if (pBtn == &_btnProj) {
-		DialogProj* p = new DialogProj(this);
-		p->openModal(DlgID::NewProj, this);
-		p->setTitle(tr("NewTeam"));
-	}*/
 	return true;
 }
-bool ViewTick::onChangedValue(gui::DateEdit* dEdit) {
+bool ViewZah::onChangedValue(gui::DateEdit* dEdit) {
 	return true;
 }
-void ViewTick::populateData(td::INT4 type) {
+void ViewZah::populateData(td::INT4 type) {
 	//_pDS = (_db->createDataSet("SELECT t.ID as ID, s.Ime as TimName, t.Stanje as Status, ((DatumKraj/1000000-DatumPoc/1000000)*24+((DatumKraj-(DatumKraj/1000000)*1000000)/10000-(DatumPoc-(DatumPoc/1000000)*1000000)/10000)*30+((DatumKraj-((DatumKraj-(DatumKraj/1000000)*1000000)/10000)*10000)%10000-(DatumPoc-((DatumPoc-(DatumPoc/1000000)*1000000)/10000)*10000)%10000)*365) as Tezina"
 	//	" FROM Tiketi t, Tim s, Projekti a, Korisnik k WHERE a.ID=t.ProjekatID and t.VlasnikID=a.MenadzerID and s.ID=k.TimID"));
-	_pDS = (_db->createDataSet("SELECT t.ID as ID, s.ID as TimID, s.Ime as TimName, CASE WHEN t.Stanje=0 THEN 'Dodan' WHEN t.Stanje=1 THEN 'U progresu' ELSE 'Zavrsen' END as Status, t.Tezina as Tezina, t.Opis as Opis FROM Tiketi t, Tim s, Projekti a, Korisnik k WHERE a.ID=t.ProjekatID and a.ID=s.ProjekatID and a.MenadzerID=k.ID and k.TimID=s.ID and s.ID!=-1"));
-	
+	_pDS = (_db->createDataSet("SELECT k.ID as ID, k.Ime || ' ' || k.Prezime as 'Ime i prezime', Cast(z.Datum/1000000 AS Varchar(255)) || '/' || Cast((z.Datum-(z.Datum/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(z.Datum%10000 AS Varchar(255)) As Datum, z.Opis as Zahtjev, CASE WHEN z.Status=0 THEN 'Neodgovoren' ELSE 'Odgovoren' END as Status, z.ID as ID1 FROM Korisnik k, Zahtjevi z where k.ID=z.SenderID and z.ReceiverID=?"));
+	dp::Params pParams1(_pDS->allocParams());
+	pParams1 << Globals::_currentUserID;
 
 	//OVO SAM IMAO PRVOBITNO ------- and t.VlasnikID=a.MenadzerID
-	
+
 	dp::DSColumns cols(_pDS->allocBindColumns(6));
-	td::String TimName, Status, Opis;
-	td::INT4 ID, Tezina, TimID;
+	td::String Name, Zahtjev,Status, Datum1;
+	td::INT4 ID,Datum,ID1;
 	//ovdje ima sila popravki                                        
-	cols << "ID" << ID << "TimID" << TimID << "TimName" << TimName << "Status" << Status << "Tezina" << Tezina << "Opis" << Opis;
+	cols << "ID" << ID << "Ime i prezime" << Name << "Datum" << Datum1 <<"Zahtjev" <<Zahtjev<< "Status" << Status<<"ID1"<<ID1;
 	if (!_pDS->execute())
 	{
 		_pDS = nullptr;
@@ -189,7 +159,7 @@ void ViewTick::populateData(td::INT4 type) {
 	}
 	//td::INT4 vrijednost = (DatumKraj - DatumPoc) * 24;
 	if (type == 0) {
-		_te.init(_pDS, { 0,2,3,4 });
+		_te.init(_pDS, { 1,2,3,4 });
 		_pomocni = _te;
 
 		dp::IDataSet* pDS = _te.getDataSet();
@@ -200,14 +170,14 @@ void ViewTick::populateData(td::INT4 type) {
 		}
 
 	}
-		
+
 	else {
 		_te.reload();
 
 		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi1;
 
 		gui::TableEdit _te1;
-		_te1.init(_pDS, { 0,2,3,4 });
+		_te1.init(_pDS, { 1,2,3,4 });
 
 		dp::IDataSet* pDS1 = _te1.getDataSet();
 		for (size_t i = 0; i < pDS1->getNumberOfRows(); ++i)
@@ -239,34 +209,33 @@ void ViewTick::populateData(td::INT4 type) {
 }
 
 
-td::INT4 ViewTick::getIDfromTable(int rowID)
+td::INT4 ViewZah::getIDfromTable(int rowID)
 {
 	dp::IDataSet* pDS = _te.getDataSet();
 	auto& row = pDS->getRow(rowID);
 	return row[0].i4Val();
 }
 
-bool ViewTick::onChangedSelection(gui::TableEdit* pTE)
+bool ViewZah::onChangedSelection(gui::TableEdit* pTE)
 {
-	
+
 	if (pTE == &_te)
 	{
 		int iRow = _te.getFirstSelectedRow();
 		if (iRow < 0)
 		{
-			_Ntiket.toZero();
-			_Ttim.toZero();
+			_Pprima.toZero();
+			_Zzahtjev.toZero();
 			_Dstat.toZero();
-			_Dtezina.toZero();
+			_Ddat.toZero();
 			return true;
 		}
 		dp::IDataSet* pDS = _te.getDataSet();
 		auto& row = pDS->getRow(iRow);
-		_Ttim.setValue(row[1].i4Val());
-		_Dstat.setValue(row[3]);
-		_Ntiket.setValue(row[0]);
-		_Dtezina.setValue(row[4]);
-		_btnDok.setValue(row[5]);
+		_Pprima.setValue(row[1]);
+		_Dstat.setValue(row[4]);
+		_Zzahtjev.setValue(row[3]);
+		_Ddat.setValue(row[2]);
 		//Dozvoljava samo 2 zbog nekog razloga??
 
 		//
@@ -275,30 +244,26 @@ bool ViewTick::onChangedSelection(gui::TableEdit* pTE)
 		return true;
 	}
 	return false;
-	
+
 	//return true;
 }
 
-void ViewTick::populateDSRow(dp::IDataSet::Row& row)
+void ViewZah::populateDSRow(dp::IDataSet::Row& row)
 {
 	td::Variant val;
-	_Ntiket.getValue(val);
-	row[0].setValue(val);
-	_btnDok.getValue(val);
-	row[5].setValue(val);
-	_Dstat.getValue(val);
-	row[3].setValue(val);
-	_Dtezina.getValue(val);
-	row[4].setValue(val);
-	
-	
-	_Ttim.getValue(val);
+	_Pprima.getValue(val);
 	row[1].setValue(val);
-	row[2].setValue(_Ttim.getSelectedText());
+	_Dstat.getValue(val);
+	row[4].setValue(val);
+	_Zzahtjev.getValue(val);
+	row[3].setValue(val);
+	_Ddat.getValue(val);
+	row[2].setValue(val);
 }
 
-bool ViewTick::canAdd()
+bool ViewZah::canAdd()
 {
+	/*
 	//cant have 2 items with same id...
 	td::Variant id = _Ntiket.getValue();
 	dp::IDataSet* pDS = _te.getDataSet();
@@ -309,13 +274,13 @@ bool ViewTick::canAdd()
 		{
 			return false;
 		}
-	}
+	}*/
 	return true;
 }
 
-bool ViewTick::eraseTicks()
+bool ViewZah::eraseTicks()
 {
-	td::INT4 id;
+	/*td::INT4 id;
 	dp::IStatementPtr pDeleteItem(_db->createStatement("delete from Tiketi where ID=?"));
 	dp::Params pParams2(pDeleteItem->allocParams());
 	pParams2 << id;
@@ -327,22 +292,23 @@ bool ViewTick::eraseTicks()
 		{
 			return false;
 		}
-	}
+	}*/
 	return true;
 }
 
-bool ViewTick::insertTicks()
+bool ViewZah::insertTicks()
 {
+	/*
 	dp::IStatementPtr pInsertItem(_db->createStatement("insert into Tiketi(ID, ProjekatID, VlasnikID, Stanje, Tezina, Opis) values(?,?,?,?,?,?)"));
 	dp::Params pParams2(pInsertItem->allocParams());
 	td::INT4 id, ProjekatId, VlasnikId, Stanje, Tezina;
 	td::String Opis;
-	pParams2 << id << ProjekatId << VlasnikId << Stanje<<Tezina << dp::toNCh(Opis, 100);
+	pParams2 << id << ProjekatId << VlasnikId << Stanje << Tezina << dp::toNCh(Opis, 100);
 
 
 	dp::IDataSet* pDS = _te.getDataSet();
 	auto rowCnt = pDS->getNumberOfRows();
-	
+
 	for (int i = 0; i < _dodaj1.size(); i++) {
 		id = _dodaj1[i][0];
 		ProjekatId = _dodaj1[i][1];
@@ -374,9 +340,9 @@ bool ViewTick::insertTicks()
 	return true;
 }
 
-bool ViewTick::updateTicks()
+bool ViewZah::updateTicks()
 {
-	dp::IStatementPtr pInsertItem(_db->createStatement("insert into Tiketi(ID, ProjekatID, VlasnikID, Stanje, Tezina, Opis) values(?,?,?,?,?,?)"));
+	/*dp::IStatementPtr pInsertItem(_db->createStatement("insert into Tiketi(ID, ProjekatID, VlasnikID, Stanje, Tezina, Opis) values(?,?,?,?,?,?)"));
 	dp::Params pParams2(pInsertItem->allocParams());
 	td::INT4 id, ProjekatId, VlasnikId, Stanje, Tezina;
 	td::String Opis;
@@ -384,12 +350,12 @@ bool ViewTick::updateTicks()
 
 	gui::TableEdit _te2;
 	td::INT4 idovi;
-	dp::IDataSet* dobijamo=_db->createDataSet("select ID from Tiketi");
-	dp::DSColumns coll=dobijamo->allocBindColumns(1);
+	dp::IDataSet* dobijamo = _db->createDataSet("select ID from Tiketi");
+	dp::DSColumns coll = dobijamo->allocBindColumns(1);
 	coll << "ID" << idovi;
 	if (!dobijamo->execute()) {
-		dobijamo=nullptr;
-			return false;
+		dobijamo = nullptr;
+		return false;
 	}
 	_te2.init(dobijamo, { 0 });
 
@@ -404,10 +370,10 @@ bool ViewTick::updateTicks()
 	for (int i = 0; i < _sviRedovi22.size(); i++) {
 		_sviRedovi222.push_back(_sviRedovi22[i][0].i4Val());
 	}
-	
+
 	for (int i = 0; i < _sviRedovi.size(); i++) {
 		id = _sviRedovi[i][0].i4Val();
-		if (_sviRedovi222.size()!=0 && std::find(_sviRedovi222.begin(), _sviRedovi222.end(), id)!=_sviRedovi222.end()) {
+		if (_sviRedovi222.size() != 0 && std::find(_sviRedovi222.begin(), _sviRedovi222.end(), id) != _sviRedovi222.end()) {
 			continue;
 		}
 		dp::IStatementPtr pSelect = _db->createStatement("SELECT Projekti.ID as _projekatID from Projekti, Tim where Projekti.ID=Tim.ProjekatID and Tim.Ime=?");
@@ -467,18 +433,18 @@ bool ViewTick::updateTicks()
 	return true;
 }
 
-bool ViewTick::saveData()
+bool ViewZah::saveData()
 {
-	dp::Transaction tr(_db);
+	/*dp::Transaction tr(_db);
 	if (pomocnaa == 0) {
 		if (!updateTicks())
 			return false;
 		pomocnaa = 1;
 	}
-		if (!eraseTicks())
-			return false;
-		if (!insertTicks())
-			return false;
+	if (!eraseTicks())
+		return false;
+	if (!insertTicks())
+		return false;
 	if (tr.commit())
 	{
 		_ticksToDelete.clear();
@@ -487,6 +453,6 @@ bool ViewTick::saveData()
 		_dodaj1.clear();
 		_dodaj2.clear();
 		pomocnaa = 1;
-	}
+	}*/
 	return true;
 }
