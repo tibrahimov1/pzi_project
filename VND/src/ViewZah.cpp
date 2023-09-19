@@ -29,13 +29,17 @@ ViewZah::ViewZah() :
 	gui::GridComposer gc(_gl);
 	gc.appendRow(_prima);
 	gc.appendCol(_Pprima);
+	_Pprima.setAsReadOnly();
 	gc.appendCol(_zahtjev);
 	gc.appendCol(_Zzahtjev);
+	_Zzahtjev.setAsReadOnly();
 
 	gc.appendRow(_dat);
 	gc.appendCol(_Ddat);
+	_Ddat.setAsReadOnly();
 	gc.appendCol(_status);
 	gc.appendCol(_Dstat);
+	_Dstat.setAsReadOnly();
 
 	gc.appendRow(_Hlbtn, 0);
 

@@ -14,7 +14,7 @@
 #include <gui/DrawableString.h>
 
 
-class ViewGrafik : public gui::Canvas
+class ViewProjGrafik : public gui::Canvas
 {
 private:
     std::vector<td::INT4> generateAxisNumbers(td::INT4 x, int maxElements) {
@@ -58,7 +58,7 @@ protected:
     float _angle = math::FLT_PI;
     bool _useDrawingAttribs = false;
 public:
-    ViewGrafik()
+    ViewProjGrafik()
        
     {
         enableResizeEvent(true);
@@ -69,7 +69,7 @@ public:
         _linija.createLines(points, 2);
 
         
-        //setBackgroundColor(td::ColorID::AquaMarine);
+        setBackgroundColor(td::ColorID::AquaMarine);
 
 
         /*gui::Point r1(_size.width * 0.1, _size.height * 0.1), r2(_size.width * 0.9, _size.height * 0.9);
@@ -332,7 +332,16 @@ public:
         wow.drawFillAndWire(td::ColorID::Pink, td::ColorID::DarkMagenta);*/
         //_linija.drawWire(td::ColorID::OrangeRed);
         
+
         prvi.drawWire(td::ColorID::Chocolate);
         drugi.drawWire(td::ColorID::Chocolate);
+
+
+        /*gui::Point p1(0, 0), p2(_size.width * 4, _size.height);
+        gui::Point p111[] = { p1,p2 };
+        gui::Shape crtam;
+        crtam.createLines(p111, 2);
+        crtam.drawWire(td::ColorID::Black);*/
+
     }
 };

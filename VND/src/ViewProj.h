@@ -6,6 +6,8 @@
 #include <gui/DateEdit.h>
 #include <gui/ComboBox.h>
 #include <gui/NumericEdit.h>
+#include <gui/VerticalLayout.h>
+#include <gui/HorizontalLayout.h>
 #include <gui/ProgressIndicator.h>
 #include <gui/Button.h>
 #include <dp/IDatabase.h>
@@ -13,6 +15,9 @@
 
 #include "../../common/include/VNDLib.h"
 #include <gui/TableEdit.h>
+
+#include "ViewProjGrafik.h"
+
 class VND_LIB_API ViewProj : public gui::View
 {
 protected:
@@ -28,10 +33,10 @@ protected:
 	//gui::ComboBox _Cfinish; //combo finish
 
 	gui::Label _date;
-	gui::DateEdit _Ddate; //date edit date
+	gui::LineEdit _Ddate; //date edit date
 
 	gui::Label _finDate;
-	gui::DateEdit _DfinDate; //date findate
+	gui::LineEdit _DfinDate; //date findate
 
 	gui::Label _num;
 	gui::NumericEdit _Nnum; //numericedit num
@@ -40,10 +45,21 @@ protected:
 	gui::ProgressIndicator _Pprog; //progr bar prog
 
 	gui::Label _spec;
-	gui::Button _btnFile;
+	gui::LineEdit _Sspec;
 
 	//gui::Button _btnProj;
 	gui::TableEdit _te;
+
+	ViewProjGrafik _Ggraf;
+	gui::VerticalLayout _Vvert, _Vvert2;
+	gui::HorizontalLayout _h1, _h2, _h3;
+
+	gui::Label _pok1;
+	gui::Label _pok2;
+	gui::Label _pok3;
+	gui::LineEdit _pok4;
+	gui::NumericEdit _pok5;
+	gui::NumericEdit _pok6;
 
 	dp::IDatabase *_db;
 	dp::IDataSet* _pDS = nullptr;
@@ -55,7 +71,7 @@ public:
 	void populateDSRow(dp::IDataSet::Row& row);
 	bool onChangedValue(gui::DateEdit* dEdit) override;
 	td::INT4 getIDfromTable(int rowID);
-	void populateData();
+	void populateData(td::INT4 type);
 
 
 };

@@ -109,7 +109,7 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 
 		td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 
-		double k = (sadTez - ukupTez) / 1. / brojDana;
+		td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round(-1. * ukupTez / k);
 
 		
@@ -234,7 +234,7 @@ bool ViewStat::onChangedSelection(gui::DBComboBox* combo) {
 
 		td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 
-		double k = (sadTez - ukupTez) / 1. / brojDana;
+		td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round( - 1. * ukupTez / k);
 
 		_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
@@ -243,6 +243,76 @@ bool ViewStat::onChangedSelection(gui::DBComboBox* combo) {
 }
 
 void ViewStat::populateData(td::INT4 type) {
+}
+
+void ViewStat::refresh() {
+	td::Variant val;
+	_Ttim.getValue(val);
+	td::INT4 IDTima = val.i4Val();
+	td::INT4 WorkRemaining;
+	dp::IStatementPtr pSelect1 = dp::getMainDatabase()->createStatement("SELECT p.ID as ID1 FROM Projekti p, Tim t WHERE p.ID=t.ProjekatID and t.ID=?");
+	dp::Params pParams2(pSelect1->allocParams());
+	pParams2 << IDTima;
+
+	dp::Columns cols1 = pSelect1->allocBindColumns(1);
+	td::INT4 ID1;
+	cols1 << "ID1" << ID1;
+
+	if (!pSelect1->execute())
+		return;
+	pSelect1->moveNext();
+
+	dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
+	dp::Params pParamss(pSelectt->allocParams());
+	pParamss << ID1;
+
+	td::INT4 ukupTez;
+	dp::Columns colss = pSelectt->allocBindColumns(1);
+	colss << "ukupTez" << ukupTez;
+
+	if (!pSelectt->execute())
+		return;
+	pSelectt->moveNext();
+
+	dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.ProjekatID=? and s.Stanje!=2");
+	dp::Params pParamsss(pSelecttt->allocParams());
+	pParamsss << ID1;
+
+	td::INT4 sadTez;
+	dp::Columns colsss = pSelecttt->allocBindColumns(1);
+	colsss << "sadTez" << sadTez;
+
+	if (!pSelecttt->execute())
+		return;
+	pSelecttt->moveNext();
+
+	dp::IStatementPtr pSelec = dp::getMainDatabase()->createStatement("SELECT DatumPoc as DatumPoc, DatumKraj as DatumKraj FROM Projekti WHERE Projekti.ID=?");
+	dp::Params pParam(pSelec->allocParams());
+	pParam << ID1;
+
+	td::INT4 dat, datkraj;
+	dp::Columns col = pSelec->allocBindColumns(2);
+	col << "DatumPoc" << dat << "DatumKraj" << datkraj;
+
+	if (!pSelec->execute())
+		return;
+	pSelec->moveNext();
+
+	td::Date datum;
+	datum.now();
+	td::INT4 dan, mjesec, god;
+	dan = dat / 1000000;
+	mjesec = (dat - dan * 1000000) / 10000;
+	god = dat % 10000;
+	td::Date datum1(god, mjesec, dan);
+
+
+	td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+
+	td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
+	td::INT4 ukupDana = std::round(-1. * ukupTez / k);
+
+	_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
 }
 
 

@@ -36,6 +36,8 @@ public:
         _viewTick.populateData(1);
         _viewTeam.populateData(1);
         _viewZah.populateData(1);
+        _viewStat.refresh();
+        _viewProj.populateData(1);
     }
 
 };

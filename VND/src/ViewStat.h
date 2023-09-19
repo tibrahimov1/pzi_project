@@ -48,4 +48,5 @@ public:
 	bool onChangedSelection(gui::DBComboBox* combo) override;
 	void populateComboBox(gui::DBComboBox& cmb, td::String naziv);
 	void populateData(td::INT4 type);
+	void refresh();
 };

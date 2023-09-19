@@ -36,15 +36,20 @@ ViewTick::ViewTick() :
 	gui::GridComposer gc(_gl);
 	gc.appendRow(_tiket);
 	gc.appendCol(_Ntiket);
+	_Ntiket.setAsReadOnly();
 	gc.appendCol(_tim);
 	gc.appendCol(_Ttim);
+	_Ttim.setAsReadOnly();
 	gc.appendCol(_dok);
 	gc.appendCol(_btnDok);
+	_btnDok.setAsReadOnly();
 
 	gc.appendRow(_status);
 	gc.appendCol(_Dstat);
+	_Dstat.setAsReadOnly();
 	gc.appendCol(_tezina);
 	gc.appendCol(_Dtezina);
+	_Dtezina.setAsReadOnly();
 	gc.appendEmptyCols(1);
 	gc.appendCol(_btnTik);
 
