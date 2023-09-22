@@ -9,6 +9,8 @@
 #include "../../VND/src/ViewProj.h"
 #include "../../VND/src/InitView.h"
 #include "../../common/include/Globals.h"
+#include "../../VND/src/PMNavigatorView.h"
+#include "../../VND/src/UserNavigatorView.h"
 
 td::INT4 Globals::_currentUserID = -1;
 
@@ -22,6 +24,11 @@ protected:
     ViewProj _vProj;
     InitView _initView;
     NewToolBar _newToolBar;
+
+    //NavigatorView _viewNav;
+    //PMNavigatorView _viewPM;
+    //UserNavigatorView _viewUser;
+
 public:
     MainWindow()
     : gui::Window(gui::Geometry(0, 0, 1000, 500))
@@ -111,17 +118,25 @@ protected:
         case 10:
         {
             //prikazi view za projekte
+            //_view.setNavigatorSelection(0);
+            //_viewPM.setNavigatorSelection(0);
+            _initView.dajTo(Globals::_currentUserID,1);
             return true;
         }
 
         case 20:
         {
             //prikazi view za uposlenike
+            //_view.setNavigatorSelection(1);
+            //_viewPM.setNavigatorSelection(1);
+            _initView.dajTo(Globals::_currentUserID,2);
             return true;
         }
         case 30:
         {
             //prikazi view za zahtjeve
+            _initView.dajTo(Globals::_currentUserID, 3);
+            return true;
         }
         default:
             return false;
@@ -135,12 +150,14 @@ protected:
         case 10:
         {
             //prikazi Pretraga view
+            _initView.dajTo(Globals::_currentUserID, 4);
             return true;
         }
 
         case 20:
         {
             //prikazi Statistika view
+            _initView.dajTo(Globals::_currentUserID, 5);
             return true;
         }
 

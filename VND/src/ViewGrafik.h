@@ -322,7 +322,7 @@ public:
 
             gui::Shape _nezavrseni;
             _nezavrseni.createLines(rr2, 2,1, td::LinePattern::Dash);
-            _nezavrseni.drawWire(td::ColorID::Khaki);
+            _nezavrseni.drawWire(td::ColorID::IndianRed);
         }
        
         /*gui::Shape wow;

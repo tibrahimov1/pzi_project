@@ -15,7 +15,7 @@ ViewTick::ViewTick() :
 	, _Dtezina(td::int4)
 	//, _btnDok("<path>")
 	, _btnTik(tr("AddTick"))
-	, _Ttim(td::int4)
+	//, _Ttim(td::int4)
 	, _Hlbtn(4)
 	, _btnSac(tr("Save"))
 	//, _btnUc("Ucitaj")
@@ -59,7 +59,7 @@ ViewTick::ViewTick() :
 	gc.appendRow(_Hlbtn,0);
 
 	gui::View::setLayout(&_gl);
-	populateComboBox(_Ttim, "SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1");
+	//populateComboBox(_Ttim, "SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1");
 	//populateComboBox1(_Status,"SELECT DISTINCT CASE WHEN Stanje = 0 THEN 'Nije zavrsen' ELSE 'Zavrsen' END as Name FROM Tiketi");
 	//_Status.addItem("Zavrsen", 0);
 	//_Status.addItem("Nije završen", 1);
@@ -267,7 +267,7 @@ bool ViewTick::onChangedSelection(gui::TableEdit* pTE)
 		}
 		dp::IDataSet* pDS = _te.getDataSet();
 		auto& row = pDS->getRow(iRow);
-		_Ttim.setValue(row[1].i4Val());
+		_Ttim.setValue(row[2]);
 		_Dstat.setValue(row[3]);
 		_Ntiket.setValue(row[0]);
 		_Dtezina.setValue(row[4]);
@@ -298,8 +298,8 @@ void ViewTick::populateDSRow(dp::IDataSet::Row& row)
 	
 	
 	_Ttim.getValue(val);
-	row[1].setValue(val);
-	row[2].setValue(_Ttim.getSelectedText());
+	row[2].setValue(val);
+	//row[2].setValue(_Ttim.getSelectedText());
 }
 
 bool ViewTick::canAdd()

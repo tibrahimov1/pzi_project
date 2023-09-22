@@ -4,6 +4,7 @@
 #include <dp/IDatabase.h>
 #include "DialogProj.h"
 #include "../../common/include/Globals.h"
+
 ViewProj::ViewProj() :
 	_gl(3, 6)
 	, _name(tr("ProjName"))
@@ -227,6 +228,6 @@ void ViewProj::populateData(td::INT4 type) {
 			}
 		}
 		_pok5.setValue(brojac);
-		_pok6.setValue(k);
+		_pok6.setValue(-1*k);
 	}
 }

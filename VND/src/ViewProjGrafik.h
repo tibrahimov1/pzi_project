@@ -69,7 +69,7 @@ public:
         _linija.createLines(points, 2);
 
         
-        setBackgroundColor(td::ColorID::AquaMarine);
+        //setBackgroundColor(td::ColorID::AquaMarine);
 
 
         /*gui::Point r1(_size.width * 0.1, _size.height * 0.1), r2(_size.width * 0.9, _size.height * 0.9);
@@ -145,9 +145,7 @@ public:
         for (int i = 0; i < _xOsa.size(); i++) {
             td::String broj = std::to_string(_xOsa[i]);
             gui::DrawableString str(broj);
-
-            str.draw({ _size.width * (0.25+0.5*i/(_xOsa.size()-1)), _size.height * 0.8}, gui::Font::ID::ViewNormal, td::ColorID::Blue);
-
+            str.draw({ _size.width * (0.25 + 0.5 * i / (_xOsa.size() - 1)), _size.height * 0.8 }, gui::Font::ID::ViewSmallest, td::ColorID::Blue);
             
             if (i == _xOsa.size() - 1) {
                 gui::Point p(_size.width * 0.75, _size.height * 0.75);
@@ -282,7 +280,9 @@ public:
             td::String broj = std::to_string(_brojDana);
             gui::DrawableString str(broj);
 
-            str.draw({ _size.width * (0.25+0.5*pozicija), _size.height * 0.8 }, gui::Font::ID::ViewNormal, td::ColorID::Red);
+            if(_size.width>300)str.draw({ _size.width * (0.25+0.5*pozicija), _size.height * 0.8 }, gui::Font::ID::ViewNormal, td::ColorID::Red);
+            else if(_size.width>150)str.draw({ _size.width * (0.25 + 0.5 * pozicija), _size.height * 0.8 }, gui::Font::ID::ViewSmaller, td::ColorID::Red);
+            else str.draw({ _size.width * (0.25 + 0.5 * pozicija), _size.height * 0.8 }, gui::Font::ID::ViewSmallest, td::ColorID::Red);
 
             gui::Point p1(_size.width * (0.25 + 0.5 * pozicija), _size.height * 0.74), p2(_size.width * (0.25 + 0.5 * pozicija), _size.height * 0.76);
             gui::Point p12[] = { p1,p2 };
@@ -322,7 +322,7 @@ public:
 
             gui::Shape _nezavrseni;
             _nezavrseni.createLines(rr2, 2,1, td::LinePattern::Dash);
-            _nezavrseni.drawWire(td::ColorID::Khaki);
+            _nezavrseni.drawWire(td::ColorID::IndianRed);
         }
        
         /*gui::Shape wow;

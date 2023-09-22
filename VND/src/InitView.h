@@ -26,4 +26,8 @@ public:
 	{
 		_mainSW.showUser();
 	}
+
+	void dajTo(td::UINT2 sel1, td::UINT2 sel2) {
+		_mainSW.dajTo(sel1, sel2);
+	}
 };

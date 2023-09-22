@@ -44,4 +44,20 @@ public:
 		showView(2);
 		_viewUser.refresh(Globals::_currentUserID);
 	}
+
+	void dajTo(td::UINT2 sel1, td::UINT2 sel2) {
+		if (sel1 == 1) {
+			_viewNav.setNavigatorSelection(sel2);
+		}
+		else if (sel1 == 2) {
+			if (sel2 == 1)sel2 = 2;
+			else if (sel2 == 2)sel2 = 1;
+			else if (sel2 == 4)sel2 = 0;
+			else if (sel2 == 5)sel2 = 4;
+			_viewPM.setNavigatorSelection(sel2);
+		}
+		else {
+			//_viewUser.setNavigatorSelection(sel2);
+		}
+	}
 };
