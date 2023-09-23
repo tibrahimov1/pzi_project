@@ -124,6 +124,7 @@ public:
 			row[3].setValue("0");
 			row[4].setValue("0");
 			row[5].setValue(ID);
+			row[6].setValue(TimID);
 
 			if (ID != 0) _te->insertRow(vel);
 			else _te->insertRow(0);
