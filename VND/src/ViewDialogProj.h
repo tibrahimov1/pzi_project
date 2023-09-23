@@ -27,12 +27,14 @@ protected:
 	gui::DateEdit _Ddate2;
 	gui::Label _man;
 	gui::DBComboBox _Cman;
+	gui::Label _opis;
+	gui::LineEdit _lopis;
 
 	td::String _filename;
 
 public:
 	ViewDialogProj() :
-		_gl(5, 2) //zbog spacinga 
+		_gl(6, 2) //zbog spacinga 
 		, _name(tr("NewProj"))
 		, _spec(tr("Spec"))
 		, _btnFile(tr("OpFile"))
@@ -40,6 +42,7 @@ public:
 		, _date2("Datum zavrsetka: ")
 		, _man(tr("ManName"))
 		, _Cman(td::int4)
+		, _opis("Opis: ")
 	{
 		gui::GridComposer gc(_gl);
 		gc.appendRow(_name);
@@ -52,6 +55,8 @@ public:
 		gc.appendCol(_Ddate2, -1);
 		gc.appendRow(_man);
 		gc.appendCol(_Cman, -1);
+		gc.appendRow(_opis);
+		gc.appendCol(_lopis, -1);
 		gc.appendEmptyCols(2);
 		gui::View::setLayout(&_gl);
 		populateCombo();
@@ -77,6 +82,11 @@ public:
 	td::String getName() const {
 		td::Variant v;
 		_Ename.getValue(v);
+		return v.strVal();
+	}
+	td::String getOpis() const {
+		td::Variant v;
+		_lopis.getValue(v);
 		return v.strVal();
 	}
 	bool onClick(gui::Button* pBtn) override {

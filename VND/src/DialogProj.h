@@ -28,6 +28,7 @@ public:
 			td::Date _sDate = _viewDialogProj.getDate();
 			td::Date _sDate2 = _viewDialogProj.getDate2();
 			td::INT4 _manID = _viewDialogProj.getID();
+			td::String _opis = _viewDialogProj.getOpis();
 
 			// trazi se sljedeci slobodni ID (a kako se projekti ne brisu iz baze ne treba se brinuti za 'rupe' u ID-evima)
 			dp::IStatementPtr pS = dp::getMainDatabase()->createStatement("SELECT MAX(ID) as 'max' FROM Projekti");
@@ -40,14 +41,15 @@ public:
 			pS->moveNext();
 
 			// ubacivanje novog projekta u bazu podataka
-			dp::IStatementPtr pInsertItem(_db->createStatement("INSERT INTO Projekti(ID, Ime, MenadzerID, Zavrsen, DatumPoc, DatumKraj) VALUES(?,?,?,?,?,?)"));
+			dp::IStatementPtr pInsertItem(_db->createStatement("INSERT INTO Projekti(ID, Ime, MenadzerID, Zavrsen, DatumPoc, DatumKraj, Opis) VALUES(?,?,?,?,?,?,?)"));
 			dp::Params pParams2(pInsertItem->allocParams());
 			td::INT4 id, menid, zavrs, dpoc, dkraj;
-			td::String ime;
-			pParams2 << id << dp::toNCh(ime, 100) << menid << zavrs << dpoc << dkraj;
+			td::String ime, opis;
+			pParams2 << id << dp::toNCh(ime, 100) << menid << zavrs << dpoc << dkraj << dp::toNCh(opis, 100);
 
 			id = idd + 1;
 			ime = _projName;
+			opis = _opis;
 			menid = _manID;
 			zavrs = 0;
 			td::INT4 dan = _sDate.getDay(), mjesec = _sDate.getMonth(), godina = _sDate.getYear();
