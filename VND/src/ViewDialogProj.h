@@ -12,7 +12,6 @@
 #include <gui/GridLayout.h>
 #include <td/Date.h>
 #include <cnt/StringBuilder.h>
-//#include <gui/Types.h>
 
 class VND_LIB_API ViewDialogProj : public gui::View
 {
@@ -24,20 +23,26 @@ protected:
 	gui::Button _btnFile;
 	gui::Label _date;
 	gui::DateEdit _Ddate;
+	gui::Label _date2;
+	gui::DateEdit _Ddate2;
 	gui::Label _man;
 	gui::DBComboBox _Cman;
+	gui::Label _opis;
+	gui::LineEdit _lopis;
 
 	td::String _filename;
 
 public:
 	ViewDialogProj() :
-		_gl(4, 2) //zbog spacinga 
+		_gl(6, 2) //zbog spacinga 
 		, _name(tr("NewProj"))
 		, _spec(tr("Spec"))
 		, _btnFile(tr("OpFile"))
-		, _date(tr("date"))
+		, _date("Datum pocetka: ")
+		, _date2("Datum zavrsetka: ")
 		, _man(tr("ManName"))
 		, _Cman(td::int4)
+		, _opis("Opis: ")
 	{
 		gui::GridComposer gc(_gl);
 		gc.appendRow(_name);
@@ -46,8 +51,12 @@ public:
 		gc.appendCol(_btnFile, -1);
 		gc.appendRow(_date);
 		gc.appendCol(_Ddate, -1);
+		gc.appendRow(_date2);
+		gc.appendCol(_Ddate2, -1);
 		gc.appendRow(_man);
 		gc.appendCol(_Cman, -1);
+		gc.appendRow(_opis);
+		gc.appendCol(_lopis, -1);
 		gc.appendEmptyCols(2);
 		gui::View::setLayout(&_gl);
 		populateCombo();
@@ -55,6 +64,11 @@ public:
 	td::Date getDate() const {
 		td::Variant v;
 		_Ddate.getValue(v);
+		return v.dateVal();
+	}
+	td::Date getDate2() const {
+		td::Variant v;
+		_Ddate2.getValue(v);
 		return v.dateVal();
 	}
 	td::INT4 getID() const {
@@ -70,8 +84,12 @@ public:
 		_Ename.getValue(v);
 		return v.strVal();
 	}
+	td::String getOpis() const {
+		td::Variant v;
+		_lopis.getValue(v);
+		return v.strVal();
+	}
 	bool onClick(gui::Button* pBtn) override {
-		//openfile handle
 		if (pBtn == &_btnFile) {
 			gui::OpenFileDialog* s = new gui::OpenFileDialog(this, "Open file", {});
 			s->openModal(DlgID::FileSelect, this);
@@ -103,7 +121,7 @@ public:
 		while (pStat->moveNext()) {
 			cnt::StringBuilderSmall sb();
 
-			_Cman.addItem(name, ID); //NE ZNAM SABRAT STRINGOVE
+			_Cman.addItem(name, ID);
 		}
 		_Cman.selectIndex(0);
 	};

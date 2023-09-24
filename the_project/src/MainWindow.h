@@ -9,12 +9,9 @@
 #include "../../VND/src/ViewProj.h"
 #include "../../VND/src/InitView.h"
 #include "../../common/include/Globals.h"
-<<<<<<< HEAD
-=======
 #include "../../VND/src/PMNavigatorView.h"
 #include "../../VND/src/UserNavigatorView.h"
 
->>>>>>> makov
 td::INT4 Globals::_currentUserID = -1;
 
 class MainWindow : public gui::Window
