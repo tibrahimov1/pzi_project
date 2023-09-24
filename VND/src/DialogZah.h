@@ -87,6 +87,66 @@ public:
 			{
 				return false;
 			}
+
+			dp::IDataSet* _pDS1 = (dp::getMainDatabase()->createDataSet("SELECT k.ID as ID, k.Ime || ' ' || k.Prezime as 'Ime i prezime', Cast(z.Datum/1000000 AS Varchar(255)) || '/' || Cast((z.Datum-(z.Datum/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(z.Datum%10000 AS Varchar(255)) As Datum, z.Opis as Zahtjev, CASE WHEN z.Status=0 THEN 'Poslan' ELSE 'Odobren' END as Status, z.ID as ID1 FROM Korisnik k, Zahtjevi z where k.ID=z.ReceiverID and z.SenderID=?"));
+			dp::Params pParams3(_pDS1->allocParams());
+			pParams3 << Globals::_currentUserID;
+
+			//OVO SAM IMAO PRVOBITNO ------- and t.VlasnikID=a.MenadzerID
+
+			dp::DSColumns cols2(_pDS1->allocBindColumns(6));
+			td::String Name2, Zahtjev2, Status2, Datum12;
+			td::INT4 ID233, Datum2, ID12;
+			//ovdje ima sila popravki                                        
+			cols2 << "ID" << ID233 << "Ime i prezime" << Name2 << "Datum" << Datum12 << "Zahtjev" << Zahtjev2 << "Status" << Status2 << "ID1" << ID12;
+			if (!_pDS1->execute())
+			{
+				_pDS1 = nullptr;
+				return false;
+			}
+
+			gui::TableEdit _te3;
+
+			_te3.init(_pDS1, { 1,2,3,4 });
+
+			std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi2;
+
+			dp::IDataSet* pDS2 = _te3.getDataSet();
+			for (size_t i = 0; i < pDS2->getNumberOfRows(); ++i)
+			{
+				auto& row = pDS2->getRow(i);
+				_sviRedovi2.push_back(row);
+			}
+
+			_te->reload();
+
+			for (size_t i = 0; i < _sviRedovi2.size(); ++i)
+			{
+				_te->beginUpdate();
+				auto& row = _te->getEmptyRow();
+				row[0] = _sviRedovi2[i][0];
+				row[1] = _sviRedovi2[i][1];
+				row[2] = _sviRedovi2[i][2];
+				row[3] = _sviRedovi2[i][3];
+				row[4] = _sviRedovi2[i][4];
+				row[5] = _sviRedovi2[i][5];
+				_te->insertRow(i);
+				_te->endUpdate();
+				//_te.insertRow(row);
+			}
+
+			for (int i = 0; i < _sviRedovi1.size(); i++) {
+				_te->beginUpdate();
+				auto& row1 = _te->getEmptyRow();
+				row1[0] = _sviRedovi1[i][0];
+				row1[1] = _sviRedovi1[i][1];
+				row1[2] = _sviRedovi1[i][2];
+				row1[3] = _sviRedovi1[i][3];
+				row1[4] = _sviRedovi1[i][4];
+				row1[5] = _sviRedovi1[i][5];
+				_te->insertRow(i);
+				_te->endUpdate();
+			}
 			//***************************
 			//write to db the new project
 			//***************************

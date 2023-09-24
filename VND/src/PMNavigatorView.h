@@ -30,6 +30,7 @@ public:
 	virtual bool onChangedSelection(gui::Navigator* pNav)
 	{
 		td::UINT2 currSelection = pNav->getCurrentSelection();
+		auto x = (int)currSelection;
 		_switcherPM.showView((int)currSelection);
 		_switcherPM.refresh(Globals::_currentUserID);
 		return true;

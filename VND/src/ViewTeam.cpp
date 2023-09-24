@@ -23,9 +23,11 @@ ViewTeam::ViewTeam() :
 	gui::GridComposer gc(_gl);
 	gc.appendRow(_teamName);
 	gc.appendCol(_Tname);
+	_Tname.setAsReadOnly();
 	gc.appendEmptyCols(2);
 	gc.appendCol(_desc);
 	gc.appendCol(_Ddesc);
+	_Ddesc.setAsReadOnly();
 	
 	gc.appendRow(_Hlbtn,0);
 	gc.appendRow(_te, 0);

@@ -22,7 +22,7 @@ protected:
 	gui::NumericEdit _Ntiket; //edit name
 
 	gui::Label _tim;
-	gui::DBComboBox _Ttim; //combo finish
+	gui::LineEdit _Ttim; //combo finish
 
 	gui::Label _dok;
 	gui::LineEdit _btnDok;

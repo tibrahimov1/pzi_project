@@ -36,6 +36,9 @@ public:
         _viewTick.populateData(1);
         _viewTeam.populateData(1);
         _viewZah.populateData(1);
+        _viewStat.refresh();
+        _viewProj.populateData(1);
+        //_viewStat.populateComboBox("SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1 and Tim.ProjekatID=-1");
     }
 
 };

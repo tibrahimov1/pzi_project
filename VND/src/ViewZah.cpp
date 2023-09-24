@@ -29,13 +29,17 @@ ViewZah::ViewZah() :
 	gui::GridComposer gc(_gl);
 	gc.appendRow(_prima);
 	gc.appendCol(_Pprima);
+	_Pprima.setAsReadOnly();
 	gc.appendCol(_zahtjev);
 	gc.appendCol(_Zzahtjev);
+	_Zzahtjev.setAsReadOnly();
 
 	gc.appendRow(_dat);
 	gc.appendCol(_Ddat);
+	_Ddat.setAsReadOnly();
 	gc.appendCol(_status);
 	gc.appendCol(_Dstat);
+	_Dstat.setAsReadOnly();
 
 	gc.appendRow(_Hlbtn, 0);
 
@@ -79,9 +83,9 @@ bool ViewZah::onClick(gui::Button* pBtn) {
 		int iRow = _te.getFirstSelectedRow();
 		dp::IDataSet* pDS = _te.getDataSet();
 		auto& row = pDS->getRow(iRow);
-		dp::IStatementPtr pInsertItem(dp::getMainDatabase()->createStatement("update Zahtjevi SET Status=1 WHERE ID=?"));
+		dp::IStatementPtr pInsertItem(dp::getMainDatabase()->createStatement("update Zahtjevi SET Status=1 WHERE ID=? and ReceiverID=?"));
 		dp::Params pParams2(pInsertItem->allocParams());
-		pParams2 << row[5];
+		pParams2 << row[5]<<Globals::_currentUserID;
 
 		if (!pInsertItem->execute())
 		{
@@ -109,15 +113,62 @@ bool ViewZah::onClick(gui::Button* pBtn) {
 
 		_te1.init(_pDS, { 1,2,3,4 });
 
-		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi11;
+		dp::IDataSet* _pDS1 = (_db->createDataSet("SELECT k.ID as ID, k.Ime || ' ' || k.Prezime as 'Ime i prezime', Cast(z.Datum/1000000 AS Varchar(255)) || '/' || Cast((z.Datum-(z.Datum/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(z.Datum%10000 AS Varchar(255)) As Datum, z.Opis as Zahtjev, CASE WHEN z.Status=0 THEN 'Poslan' ELSE 'Odobren' END as Status, z.ID as ID1 FROM Korisnik k, Zahtjevi z where k.ID=z.ReceiverID and z.SenderID=?"));
+		dp::Params pParams3(_pDS1->allocParams());
+		pParams3 << Globals::_currentUserID;
 
-		dp::IDataSet* pDS2 = _te1.getDataSet();
+		//OVO SAM IMAO PRVOBITNO ------- and t.VlasnikID=a.MenadzerID
+
+		dp::DSColumns cols2(_pDS1->allocBindColumns(6));
+		td::String Name2, Zahtjev2, Status2, Datum12;
+		td::INT4 ID2, Datum2, ID12;
+		//ovdje ima sila popravki                                        
+		cols2 << "ID" << ID2 << "Ime i prezime" << Name2 << "Datum" << Datum12 << "Zahtjev" << Zahtjev2 << "Status" << Status2 << "ID1" << ID12;
+		if (!_pDS1->execute())
+		{
+			_pDS1 = nullptr;
+			return false;
+		}
+
+		gui::TableEdit _te2;
+
+		_te2.init(_pDS1, { 1,2,3,4 });
+
+		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi2;
+
+		dp::IDataSet* pDS2 = _te2.getDataSet();
 		for (size_t i = 0; i < pDS2->getNumberOfRows(); ++i)
 		{
-			auto& row1 = pDS2->getRow(i);
+			auto& row = pDS2->getRow(i);
+			_sviRedovi2.push_back(row);
+		}
+
+		_te.reload();
+
+		for (size_t i = 0; i < _sviRedovi2.size(); ++i)
+		{
+			_te.beginUpdate();
+			auto& row = _te.getEmptyRow();
+			row[0] = _sviRedovi2[i][0];
+			row[1] = _sviRedovi2[i][1];
+			row[2] = _sviRedovi2[i][2];
+			row[3] = _sviRedovi2[i][3];
+			row[4] = _sviRedovi2[i][4];
+			row[5] = _sviRedovi2[i][5];
+			_te.insertRow(i);
+			_te.endUpdate();
+			//_te.insertRow(row);
+		}
+
+		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi11;
+
+		dp::IDataSet* pDS3 = _te1.getDataSet();
+		for (size_t i = 0; i < pDS3->getNumberOfRows(); ++i)
+		{
+			auto& row1 = pDS3->getRow(i);
 			_sviRedovi11.push_back(row1);
 		}
-		_te.reload();
+		
 		for (int i = 0; i < _sviRedovi11.size(); i++) {
 			_te.beginUpdate();
 			auto& row1 = _te.getEmptyRow();
@@ -157,6 +208,7 @@ void ViewZah::populateData(td::INT4 type) {
 		_pDS = nullptr;
 		return;
 	}
+
 	//td::INT4 vrijednost = (DatumKraj - DatumPoc) * 24;
 	if (type == 0) {
 		_te.init(_pDS, { 1,2,3,4 });
@@ -179,6 +231,58 @@ void ViewZah::populateData(td::INT4 type) {
 		gui::TableEdit _te1;
 		_te1.init(_pDS, { 1,2,3,4 });
 
+		/*_ticksToDelete.clear();
+		_ticksToInsert.clear();
+		_ticksToUpdate.clear();
+		_dodaj1.clear();
+		_dodaj2.clear();
+		*/
+
+		dp::IDataSet* _pDS1 = (_db->createDataSet("SELECT k.ID as ID, k.Ime || ' ' || k.Prezime as 'Ime i prezime', Cast(z.Datum/1000000 AS Varchar(255)) || '/' || Cast((z.Datum-(z.Datum/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(z.Datum%10000 AS Varchar(255)) As Datum, z.Opis as Zahtjev, CASE WHEN z.Status=0 THEN 'Poslan' ELSE 'Odobren' END as Status, z.ID as ID1 FROM Korisnik k, Zahtjevi z where k.ID=z.ReceiverID and z.SenderID=?"));
+		dp::Params pParams2(_pDS1->allocParams());
+		pParams2 << Globals::_currentUserID;
+
+		//OVO SAM IMAO PRVOBITNO ------- and t.VlasnikID=a.MenadzerID
+
+		dp::DSColumns cols2(_pDS1->allocBindColumns(6));
+		td::String Name2, Zahtjev2, Status2, Datum12;
+		td::INT4 ID2, Datum2, ID12;
+		//ovdje ima sila popravki                                        
+		cols2 << "ID" << ID2 << "Ime i prezime" << Name2 << "Datum" << Datum12 << "Zahtjev" << Zahtjev2 << "Status" << Status2 << "ID1" << ID12;
+		if (!_pDS1->execute())
+		{
+			_pDS1 = nullptr;
+			return;
+		}
+
+		gui::TableEdit _te2;
+
+		_te2.init(_pDS1, { 1,2,3,4 });
+
+		std::vector<cnt::SafeFullVector<td::Variant, false>> _sviRedovi2;
+
+		dp::IDataSet* pDS2 = _te2.getDataSet();
+		for (size_t i = 0; i < pDS2->getNumberOfRows(); ++i)
+		{
+			auto& row = pDS2->getRow(i);
+			_sviRedovi2.push_back(row);
+		}
+
+		for (size_t i = 0; i < _sviRedovi2.size(); ++i)
+		{
+			_te.beginUpdate();
+			auto& row = _te.getEmptyRow();
+			row[0] = _sviRedovi2[i][0];
+			row[1] = _sviRedovi2[i][1];
+			row[2] = _sviRedovi2[i][2];
+			row[3] = _sviRedovi2[i][3];
+			row[4] = _sviRedovi2[i][4];
+			row[5] = _sviRedovi2[i][5];
+			_te.insertRow(i);
+			_te.endUpdate();
+			//_te.insertRow(row);
+		}
+
 		dp::IDataSet* pDS1 = _te1.getDataSet();
 		for (size_t i = 0; i < pDS1->getNumberOfRows(); ++i)
 		{
@@ -200,6 +304,7 @@ void ViewZah::populateData(td::INT4 type) {
 			_te.endUpdate();
 			//_te.insertRow(row);
 		}
+
 		_ticksToDelete.clear();
 		_ticksToInsert.clear();
 		_ticksToUpdate.clear();
@@ -435,24 +540,5 @@ bool ViewZah::updateTicks()
 
 bool ViewZah::saveData()
 {
-	/*dp::Transaction tr(_db);
-	if (pomocnaa == 0) {
-		if (!updateTicks())
-			return false;
-		pomocnaa = 1;
-	}
-	if (!eraseTicks())
-		return false;
-	if (!insertTicks())
-		return false;
-	if (tr.commit())
-	{
-		_ticksToDelete.clear();
-		_ticksToInsert.clear();
-		_ticksToUpdate.clear();
-		_dodaj1.clear();
-		_dodaj2.clear();
-		pomocnaa = 1;
-	}*/
 	return true;
 }

@@ -14,7 +14,7 @@
 #include <gui/DrawableString.h>
 
 
-class ViewGrafik : public gui::Canvas
+class ViewProjGrafik : public gui::Canvas
 {
 private:
     std::vector<td::INT4> generateAxisNumbers(td::INT4 x, int maxElements) {
@@ -58,7 +58,7 @@ protected:
     float _angle = math::FLT_PI;
     bool _useDrawingAttribs = false;
 public:
-    ViewGrafik()
+    ViewProjGrafik()
        
     {
         enableResizeEvent(true);
@@ -80,7 +80,7 @@ public:
 
 
 
-    void StaviTacke(td::INT4 ukupTez, td::INT4 sadTez, td::INT4 brojDana, td::INT4 ukupDana, td::INT4 stanje) 
+    void StaviTacke(td::INT4 ukupTez, td::INT4 sadTez, td::INT4 brojDana, td::INT4 ukupDana, td::INT4 stanje)
     {
         //stavi u vektore vrijednosti po nekom pravilu (npr 5 vrijednosti pa ih ravnomjerno raspodjeli)
         _xOsa = generateAxisNumbers(ukupDana, 5);
@@ -122,7 +122,6 @@ public:
 
     void onDraw(const gui::Rect& rect) override
     {
-
         if (_stanje == -1) {
             //Nema dodanih tiketa
             gui::DrawableString _osa1("NEMA DODANIH TIKETA");
@@ -131,7 +130,7 @@ public:
             gui::Transformation tr;
 
             tr.translate(0, 0);
-            
+
             tr.setToContext();
 
             _osa1.draw({ _size.width * 0.35,_size.height * 0.3 }, gui::Font::ID::SystemLargestBold, td::ColorID::Black);
@@ -186,9 +185,7 @@ public:
             for (int i = 0; i < _xOsa.size(); i++) {
                 td::String broj = std::to_string(_xOsa[i]);
                 gui::DrawableString str(broj);
-
-                str.draw({ _size.width * (0.25 + 0.5 * i / (_xOsa.size() - 1)), _size.height * 0.8 }, gui::Font::ID::ViewNormal, td::ColorID::Blue);
-
+                str.draw({ _size.width * (0.25 + 0.5 * i / (_xOsa.size() - 1)), _size.height * 0.8 }, gui::Font::ID::ViewSmallest, td::ColorID::Blue);
 
                 if (i == _xOsa.size() - 1) {
                     gui::Point p(_size.width * 0.75, _size.height * 0.75);
@@ -323,7 +320,9 @@ public:
                 td::String broj = std::to_string(_brojDana);
                 gui::DrawableString str(broj);
 
-                str.draw({ _size.width * (0.25 + 0.5 * pozicija), _size.height * 0.8 }, gui::Font::ID::ViewNormal, td::ColorID::Red);
+                if (_size.width > 300)str.draw({ _size.width * (0.25 + 0.5 * pozicija), _size.height * 0.8 }, gui::Font::ID::ViewNormal, td::ColorID::Red);
+                else if (_size.width > 150)str.draw({ _size.width * (0.25 + 0.5 * pozicija), _size.height * 0.8 }, gui::Font::ID::ViewSmaller, td::ColorID::Red);
+                else str.draw({ _size.width * (0.25 + 0.5 * pozicija), _size.height * 0.8 }, gui::Font::ID::ViewSmallest, td::ColorID::Red);
 
                 gui::Point p1(_size.width * (0.25 + 0.5 * pozicija), _size.height * 0.74), p2(_size.width * (0.25 + 0.5 * pozicija), _size.height * 0.76);
                 gui::Point p12[] = { p1,p2 };
@@ -373,8 +372,17 @@ public:
             wow.drawFillAndWire(td::ColorID::Pink, td::ColorID::DarkMagenta);*/
             //_linija.drawWire(td::ColorID::OrangeRed);
 
+
             prvi.drawWire(td::ColorID::Chocolate);
             drugi.drawWire(td::ColorID::Chocolate);
+
+
+            /*gui::Point p1(0, 0), p2(_size.width * 4, _size.height);
+            gui::Point p111[] = { p1,p2 };
+            gui::Shape crtam;
+            crtam.createLines(p111, 2);
+            crtam.drawWire(td::ColorID::Black);*/
+
         }
         
     }
