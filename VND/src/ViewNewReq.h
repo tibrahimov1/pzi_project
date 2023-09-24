@@ -34,7 +34,7 @@ public:
 		gui::View::setLayout(&_gl);
 	}
 	bool storetoDB() {
-		dp::IDatabasePtr _db = dp::getMainDatabase();
+		dp::IDatabase *_db = dp::getMainDatabase();
 		dp::IStatementPtr hstat = _db->createStatement("SELECT b.ProjekatID "
 			" FROM Korisnik a, Tim b "
 			" WHERE a.ID = ? AND a.TimID = b.ID"
@@ -89,6 +89,11 @@ public:
 		newparams << td::Variant(td::INT4(reqID + 1)) << Globals::_currentUserID << manID << dp::toNCh(var, 40) << datum << td::Variant(0);
 		if (!pstat->execute())
 			return false;
+
+		pstat = nullptr;
+		kstat = nullptr;
+		lstat = nullptr;
+		_db = nullptr;
 		return true;
 
 	}

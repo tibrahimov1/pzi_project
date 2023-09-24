@@ -7,10 +7,12 @@
 class VND_LIB_API DialogNewReq : public gui::Dialog
 {
 	ViewNewReq _view;
+	std::function<void()> _func;
 public:
-	DialogNewReq(gui::Frame* pView) :
+	DialogNewReq(gui::Frame* pView, std::function<void()> func) :
 		_view(),
-		gui::Dialog (pView, {{gui::Dialog::Button::ID::OK, tr("OK"), gui::Button::Type::Default},
+		_func(func),
+		gui::Dialog(pView, { {gui::Dialog::Button::ID::OK, tr("OK"), gui::Button::Type::Default},
 			{gui::Dialog::Button::ID::Cancel, tr("Cancel")} }, gui::Size(300, 100))
 	{
 		setCentralView(&_view);
@@ -18,7 +20,9 @@ public:
 	bool onClick(gui::Dialog::Button::ID btnID, gui::Button* pBtn) {
 		if (btnID == gui::Dialog::Button::ID::OK) {
 			//store to DB
-			return _view.storetoDB();
+			_view.storetoDB();
+			_func();
+			return true;
 		}
 		else {
 			return false;

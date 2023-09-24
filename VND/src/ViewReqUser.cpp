@@ -29,13 +29,16 @@ ViewReqUser::ViewReqUser() :
 	gc.appendRow(_te,-1);
 	gui::View::setLayout(&_gl);
 	_hidbtn.hide(1,1);
+	_stowards.setAsReadOnly();
+	_sreq.setAsReadOnly();
+	_sstatus.setAsReadOnly();
 	populateData();
 }
 
 bool ViewReqUser::onClick(gui::Button* pBtn) {
 	if (pBtn == &_btn) {
 		//otvori novi dijalog
-		DialogNewReq* pDlg = new DialogNewReq(this);
+		DialogNewReq* pDlg = new DialogNewReq(this, (std::function<void()>)std::bind(&ViewReqUser::refresh, this));
 		pDlg->openModal();
 		pDlg->setTitle(tr("NewReq"));
 	}
@@ -78,4 +81,35 @@ bool ViewReqUser::onChangedSelection(gui::TableEdit* pTe) {
 	_sdate.setValue(row[0]);
 	_sstatus.setValue(row[5]);
 	return true;
+}
+void ViewReqUser::refresh() {
+	dp::IStatementPtr sStat = _db->createStatement("SELECT a.Datum, a.Status, b.Ime, b.Prezime, a.Opis, "
+													"CASE WHEN a.Status = 0 THEN 'Primljen' "
+													"WHEN a.Status = 1 THEN 'Odgovoren' "
+													"ELSE 'Problem' "
+													"END AS Stanje "
+													"FROM Zahtjevi a, Korisnik b "
+													"WHERE( a.SenderID = ? OR a.ReceiverID = ?) AND b.ID = a.ReceiverID");
+	dp::Params params(sStat->allocParams());
+	dp::Columns cols(sStat->allocBindColumns(6));
+	td::Date datum;
+	td::INT4 status;
+	td::String ime, prezime, stanje, opis;
+	cols << "Datum" << datum << "Status" << status << "Ime" << ime << "Prezime" << prezime << "Opis" << opis << "Stanje" << stanje;
+	params << Globals::_currentUserID;
+	if (!sStat->execute()) {
+		return;
+	}
+	while(sStat->moveNext());
+	dp::IDataSet::Row newrow = _te.getEmptyRow();
+	newrow[0] = datum;
+	newrow[1] = status;
+	newrow[2] = ime;
+	newrow[3] = prezime;
+	newrow[4] = opis;
+	newrow[5] = stanje;
+
+	_te.beginUpdate();
+	_te.insertRow(_te.getFirstSelectedRow() + 1);
+	_te.endUpdate();
 }

@@ -37,5 +37,5 @@ public:
 	bool onClick(gui::Button* pBtn) override;
 	bool onChangedSelection(gui::TableEdit* pTe) override;
 	void populateData();
-
+	void refresh();
 };
