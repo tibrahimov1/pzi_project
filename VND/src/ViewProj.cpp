@@ -6,7 +6,7 @@
 #include "../../common/include/Globals.h"
 
 ViewProj::ViewProj() :
-	_gl(3, 6)
+	_gl(4, 6)
 	, _name(tr("ProjName"))
 	//,_manName(tr("ManName"))
 	//,_finish(tr("Finish"))
@@ -19,9 +19,9 @@ ViewProj::ViewProj() :
 	//,_btnProj(tr("NewProj"))
 	, _db(dp::getMainDatabase())
 	, _Nnum(td::int4, gui::LineEdit::Messages::DoNotSend)
-	, _Vvert(3)
+	, _Vvert(6)
 	, _Vvert2(3)
-	, _h1(2)
+	, _h1(3)
 	, _h2(2)
 	, _h3(3)
 	, _pok1(tr("ExpEnd"))
@@ -29,6 +29,8 @@ ViewProj::ViewProj() :
 	, _pok3(tr("BrSpeed"))
 	, _pok5(td::int4)
 	, _pok6(td::decimal4)
+	, _Ttim(td::int4)
+	, _addTim(tr("AddTeam"))
 {
 	/*_h1.append(_pok1);
 	_h1.append(_pok2);
@@ -37,12 +39,11 @@ ViewProj::ViewProj() :
 	_h3.append(_pok5);
 	_h3.append(_pok6);*/
 	_Vvert.append(_pok1);
+	_Vvert.append(_pok4);
 	_Vvert.append(_pok2);
+	_Vvert.append(_pok5);
 	_Vvert.append(_pok3);
-
-	_Vvert2.append(_pok4);
-	_Vvert2.append(_pok5);
-	_Vvert2.append(_pok6);
+	_Vvert.append(_pok6);
 
 	_pok4.setAsReadOnly();
 	_pok5.setAsReadOnly();
@@ -51,7 +52,7 @@ ViewProj::ViewProj() :
 	//_h3.append(_Ggraf);
 	//_h3.appendSpacer(1);
 	_h3.append(_Vvert);
-	_h3.append(_Vvert2);
+	//_h3.append(_Vvert2);
 
 	_h2.appendSpacer(1);
 
@@ -83,6 +84,13 @@ ViewProj::ViewProj() :
 	
 	//gc.appendRow(_h2);
 	//gc.appendCol(_Ggraf);
+
+	_h1.appendSpacer();
+	_h1.append(_Ttim);
+	_h1.append(_addTim);
+
+	gc.appendRow(_h1,0);
+
 	gc.appendRow(_Ggraf,5);
 	gc.appendCol(_h3);
 	
@@ -95,9 +103,60 @@ ViewProj::ViewProj() :
 	//gc.appendRow(_te, 0);
 	gui::View::setLayout(&_gl);
 
+	populateComboBox("SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1 and Tim.ProjekatID=-1");
 	populateData(0);
 
+
 	//setaasreadonly
+}
+
+void ViewProj::populateComboBox(td::String naziv) {
+	dp::IStatementPtr pSelect = _db->createStatement(naziv.c_str());
+	dp::Columns pCols = pSelect->allocBindColumns(2);
+	td::String name;
+	td::INT4 id;
+	pCols << "ID" << id << "Name" << name;
+	if (!pSelect->execute())
+		assert(false);
+
+	while (pSelect->moveNext())
+	{
+		_Ttim.addItem(name, id);
+	}
+	_Ttim.selectIndex(0);
+}
+
+bool ViewProj::onChangedSelection(gui::DBComboBox* combo) {
+
+	if (combo == &_Ttim) {
+		/*td::Variant val;
+		_Ttim.getValue(val);
+		td::INT4 IDTima = val.i4Val();
+
+		dp::IStatementPtr pSelect1 = dp::getMainDatabase()->createStatement("SELECT p.ID as ID1 FROM Projekti p, Tim t WHERE p.ID=t.ProjekatID and t.ID=?");
+		dp::Params pParams2(pSelect1->allocParams());
+		pParams2 << IDTima;
+
+		dp::Columns cols1 = pSelect1->allocBindColumns(1);
+		td::INT4 ID1;
+		cols1 << "ID1" << ID1;
+
+		if (!pSelect1->execute())
+			return false;
+		pSelect1->moveNext();
+
+		dp::IStatementPtr pInsertItem(dp::getMainDatabase()->createStatement("update Tim SET ProjekatID=? WHERE ID=?"));
+		dp::Params pParams3(pInsertItem->allocParams());
+		pParams3 << ID1<<IDTima;
+
+		if (!pInsertItem->execute())
+		{
+			return false;
+		}
+		pInsertItem->moveNext();
+		*/
+	}
+	return true;
 }
 
 bool ViewProj::onClick(gui::Button* pBtn) {
@@ -110,16 +169,49 @@ bool ViewProj::onClick(gui::Button* pBtn) {
 		p->openModal(DlgID::NewProj, this);
 		p->setTitle(tr("NewProj"));
 	}*/
+	if (pBtn == &_addTim) {
+		td::Variant val;
+		_Ttim.getValue(val);
+		td::INT4 IDTima = val.i4Val();
+
+		dp::IStatementPtr pSelect1 = dp::getMainDatabase()->createStatement("SELECT p.ID as ID1 FROM Projekti p WHERE p.MenadzerID=?");
+		dp::Params pParams2(pSelect1->allocParams());
+		pParams2 << Globals::_currentUserID;
+
+		dp::Columns cols1 = pSelect1->allocBindColumns(1);
+		td::INT4 ID1;
+		cols1 << "ID1" << ID1;
+
+		if (!pSelect1->execute())
+			return false;
+		pSelect1->moveNext();
+
+		dp::IStatementPtr pInsertItem(dp::getMainDatabase()->createStatement("update Tim SET ProjekatID=? WHERE ID=?"));
+		dp::Params pParams3(pInsertItem->allocParams());
+		pParams3 << ID1 << IDTima;
+
+		if (!pInsertItem->execute())
+		{
+			return false;
+		}
+		pInsertItem->moveNext();
+
+		auto poz = _Ttim.getSelectedIndex();
+		_Ttim.removeItem(poz);
+		_Ttim.selectIndex(0);
+	}
 	return true;
 }
 bool ViewProj::onChangedValue(gui::DateEdit* dEdit) {
 	return true;
 }
 void ViewProj::populateData(td::INT4 type) {
-	dp::IStatementPtr pSelect = (_db->createStatement("SELECT a.Ime as ProjName, CASE WHEN a.Zavrsen=0 THEN 'U progresu' ELSE 'Zavrsen' END as Status, Cast(a.DatumPoc/1000000 AS Varchar(255)) || '/' || Cast((a.DatumPoc-(a.DatumPoc/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(a.DatumPoc%10000 AS Varchar(255)) As DatumPoc, Cast(a.DatumKraj/1000000 AS Varchar(255)) || '/' || Cast((a.DatumKraj-(a.DatumKraj/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(a.DatumKraj%10000 AS Varchar(255)) As DatumKraj, b.Ime, b.Prezime, t.BrClanova as BrClanova, b.TimID as TimID, t.Opis as Opis"
+	dp::IStatementPtr pSelect = (_db->createStatement("SELECT a.Ime as ProjName, CASE WHEN a.Zavrsen=0 THEN 'U progresu' ELSE 'Zavrsen' END as Status, Cast(a.DatumPoc/1000000 AS Varchar(255)) || '/' || Cast((a.DatumPoc-(a.DatumPoc/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(a.DatumPoc%10000 AS Varchar(255)) As DatumPoc, Cast(a.DatumKraj/1000000 AS Varchar(255)) || '/' || Cast((a.DatumKraj-(a.DatumKraj/1000000)*1000000)/10000 As Varchar(255))  || '/' || Cast(a.DatumKraj%10000 AS Varchar(255)) As DatumKraj, b.Ime, b.Prezime, t.BrClanova as BrClanova, b.TimID as TimID, a.Opis as Opis"
 		" FROM Projekti a, Korisnik b, Tim t WHERE a.MenadzerID=b.ID and t.ProjekatID=a.ID and a.MenadzerID=?"));
 	dp::Params pParams1(pSelect->allocParams());
 	pParams1 << Globals::_currentUserID;
+	//td::INT4 omgg = 1;
+	//pParams1 << omgg;
 
 	dp::Columns cols(pSelect->allocBindColumns(9));
 	td::String Ime, Prezime, ProjName, DatumPoc, DatumKraj, Zavrsen, Opis;
@@ -150,6 +242,23 @@ void ViewProj::populateData(td::INT4 type) {
 		if (!pSelect1->execute())
 			return;
 		pSelect1->moveNext();
+
+		dp::IStatementPtr pSelectt23 = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as brojj FROM Tiketi s WHERE s.ProjekatID=?");
+		dp::Params pParamss23(pSelectt23->allocParams());
+		pParamss23 << IDTima;
+
+		td::INT4 brojj;
+		dp::Columns colss23 = pSelectt23->allocBindColumns(1);
+		colss23 << "brojj" << brojj;
+
+		if (!pSelectt23->execute())
+			return;
+		pSelectt23->moveNext();
+
+		if (brojj == 0) {
+			_Ggraf.StaviTacke(0, 0, 0, 0, -1);
+			return;
+		}
 
 		dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
 		dp::Params pParamss(pSelectt->allocParams());
@@ -200,7 +309,12 @@ void ViewProj::populateData(td::INT4 type) {
 
 		td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round(-1. * ukupTez / k);
-		_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+
+		if (ukupTez == sadTez) {
+			_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 0);
+			return;
+		}
+		else _Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana,1);
 
 		_Pprog.setValue(brojDana / 1. / ukupDana);
 

@@ -177,7 +177,12 @@ bool ViewTick::onChangedValue(gui::DateEdit* dEdit) {
 void ViewTick::populateData(td::INT4 type) {
 	//_pDS = (_db->createDataSet("SELECT t.ID as ID, s.Ime as TimName, t.Stanje as Status, ((DatumKraj/1000000-DatumPoc/1000000)*24+((DatumKraj-(DatumKraj/1000000)*1000000)/10000-(DatumPoc-(DatumPoc/1000000)*1000000)/10000)*30+((DatumKraj-((DatumKraj-(DatumKraj/1000000)*1000000)/10000)*10000)%10000-(DatumPoc-((DatumPoc-(DatumPoc/1000000)*1000000)/10000)*10000)%10000)*365) as Tezina"
 	//	" FROM Tiketi t, Tim s, Projekti a, Korisnik k WHERE a.ID=t.ProjekatID and t.VlasnikID=a.MenadzerID and s.ID=k.TimID"));
-	_pDS = (_db->createDataSet("SELECT t.ID as ID, s.ID as TimID, s.Ime as TimName, CASE WHEN t.Stanje=0 THEN 'Dodan' WHEN t.Stanje=1 THEN 'U progresu' ELSE 'Zavrsen' END as Status, t.Tezina as Tezina, t.Opis as Opis FROM Tiketi t, Tim s, Projekti a, Korisnik k WHERE a.ID=t.ProjekatID and a.ID=s.ProjekatID and a.MenadzerID=k.ID and k.TimID=s.ID and s.ID!=-1"));
+	
+	
+	//Ovo je staro bilo prije promjene baze podataka tiketi
+	//_pDS = (_db->createDataSet("SELECT t.ID as ID, s.ID as TimID, s.Ime as TimName, CASE WHEN t.Stanje=0 THEN 'Dodan' WHEN t.Stanje=1 THEN 'U progresu' ELSE 'Zavrsen' END as Status, t.Tezina as Tezina, t.Opis as Opis FROM Tiketi t, Tim s, Projekti a, Korisnik k WHERE a.ID=t.ProjekatID and a.ID=s.ProjekatID and a.MenadzerID=k.ID and k.TimID=s.ID and s.ID!=-1"));
+
+	_pDS = (_db->createDataSet("SELECT t.ID as ID, t.TimID as TimID, s.Ime as TimName, CASE WHEN t.Stanje = 0 THEN 'Dodan' WHEN t.Stanje = 1 THEN 'U progresu' ELSE 'Zavrsen' END as Status, t.Tezina as Tezina, t.Opis as Opis FROM Tiketi t, Tim s WHERE s.ID != -1 and t.TimID = s.ID"));
 	
 
 	//OVO SAM IMAO PRVOBITNO ------- and t.VlasnikID=a.MenadzerID
@@ -338,11 +343,11 @@ bool ViewTick::eraseTicks()
 
 bool ViewTick::insertTicks()
 {
-	dp::IStatementPtr pInsertItem(_db->createStatement("insert into Tiketi(ID, ProjekatID, VlasnikID, Stanje, Tezina, Opis) values(?,?,?,?,?,?)"));
+	dp::IStatementPtr pInsertItem(_db->createStatement("insert into Tiketi(ID, ProjekatID, VlasnikID, TimID, Stanje, Tezina, Opis) values(?,?,?,?,?,?,?)"));
 	dp::Params pParams2(pInsertItem->allocParams());
-	td::INT4 id, ProjekatId, VlasnikId, Stanje, Tezina;
+	td::INT4 id, ProjekatId, VlasnikId, TimID, Stanje, Tezina;
 	td::String Opis;
-	pParams2 << id << ProjekatId << VlasnikId << Stanje<<Tezina << dp::toNCh(Opis, 100);
+	pParams2 << id << ProjekatId << VlasnikId << TimID <<Stanje<<Tezina << dp::toNCh(Opis, 100);
 
 
 	dp::IDataSet* pDS = _te.getDataSet();
@@ -354,6 +359,7 @@ bool ViewTick::insertTicks()
 		VlasnikId = _dodaj1[i][2];
 		Stanje = _dodaj1[i][3];
 		Tezina = _dodaj1[i][4];
+		TimID = _dodaj1[i][5];
 		Opis = _dodaj2[i];
 
 		if (!pInsertItem->execute())

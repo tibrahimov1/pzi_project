@@ -46,7 +46,7 @@ public:
 	ViewStat();
 	bool onClick(gui::Button* pBtn) override;
 	bool onChangedSelection(gui::DBComboBox* combo) override;
-	void populateComboBox(gui::DBComboBox& cmb, td::String naziv);
+	void populateComboBox(td::String naziv);
 	void populateData(td::INT4 type);
 	void refresh();
 };

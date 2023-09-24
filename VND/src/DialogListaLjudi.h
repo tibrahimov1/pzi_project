@@ -106,7 +106,21 @@ public:
 				mjesec = (dat - dan * 1000000) / 10000;
 				god = dat % 10000;
 				td::Date datum1(god, mjesec, dan);
-				td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+				//td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+
+				//td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+
+				td::INT4 brojac;
+				td::Date dkraj2(datum1);
+				for (brojac = 0;; brojac++) {
+					dkraj2 += 1;
+					if (dkraj2 == datum) {
+						brojac++;
+						break;
+					}
+				}
+
+				td::INT4 brojDana = brojac;
 
 				dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
 				dp::Params pParamss(pSelectt->allocParams());

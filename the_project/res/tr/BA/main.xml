@@ -56,5 +56,6 @@
 	  <Res id="ExpEnd" tr="Očekivano vrijeme završetka:"/>
 	  <Res id="Prolong" tr="Zakašnjenje:"/>
 	  <Res id="BrSpeed" tr="Burndown brzina:"/>
+	  <Res id="AddTeam" tr="Dodaj Tim:"/>
 	</Translations>
 </DevRes>

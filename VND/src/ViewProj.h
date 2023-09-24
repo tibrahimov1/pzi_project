@@ -12,6 +12,7 @@
 #include <gui/Button.h>
 #include <dp/IDatabase.h>
 #include <dp/IDataSet.h>
+#include <gui/DBComboBox.h>
 
 #include "../../common/include/VNDLib.h"
 #include <gui/TableEdit.h>
@@ -47,6 +48,9 @@ protected:
 	gui::Label _spec;
 	gui::LineEdit _Sspec;
 
+	gui::DBComboBox _Ttim;
+	gui::Button _addTim;
+
 	//gui::Button _btnProj;
 	gui::TableEdit _te;
 
@@ -67,7 +71,9 @@ protected:
 public:
 	ViewProj();
 	bool onClick(gui::Button *pBtn) override;
-	void populateComboBox(gui::ComboBox &cmb);
+	void populateComboBox(td::String naziv);
+	//void populateComboBox(gui::ComboBox &cmb);
+	bool onChangedSelection(gui::DBComboBox* combo) override;
 	void populateDSRow(dp::IDataSet::Row& row);
 	bool onChangedValue(gui::DateEdit* dEdit) override;
 	td::INT4 getIDfromTable(int rowID);

@@ -98,6 +98,7 @@ public:
 			zadodati.push_back(_vlasnikID);
 			zadodati.push_back(stanje);
 			zadodati.push_back(tezina);
+			zadodati.push_back(IDtim);
 
 			_dodaj1->push_back(zadodati);
 			_dodaj2->push_back(_opis);

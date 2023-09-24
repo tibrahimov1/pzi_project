@@ -21,12 +21,12 @@ ViewStat::ViewStat() :
 	gc.appendRow(_Graf, 0);
 
 	gui::View::setLayout(&_gl);
-	populateComboBox(_Ttim, "SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1 and Tim.ProjekatID!=-1");
+	populateComboBox("SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1 and Tim.ProjekatID!=-1");
 	populateData(0);
 	//setaasreadonly
 }
 
-void ViewStat::populateComboBox(gui::DBComboBox& cmb, td::String naziv) {
+void ViewStat::populateComboBox(td::String naziv) {
 	dp::IStatementPtr pSelect = _db->createStatement(naziv.c_str());
 	dp::Columns pCols = pSelect->allocBindColumns(2);
 	td::String name;
@@ -37,9 +37,9 @@ void ViewStat::populateComboBox(gui::DBComboBox& cmb, td::String naziv) {
 
 	while (pSelect->moveNext())
 	{
-		cmb.addItem(name, id);
+		_Ttim.addItem(name, id);
 	}
-	cmb.selectIndex(0);
+	_Ttim.selectIndex(0);
 }
 
 
@@ -62,9 +62,32 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 			return false;
 		pSelect1->moveNext();
 
-		dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
+		dp::IStatementPtr pSelectt234 = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as brojj FROM Tiketi s WHERE s.TimID=?");
+		dp::Params pParamss234(pSelectt234->allocParams());
+		pParamss234 << IDTima;
+
+		td::INT4 brojj;
+		dp::Columns colss234 = pSelectt234->allocBindColumns(1);
+		colss234 << "brojj" << brojj;
+
+		if (!pSelectt234->execute())
+			return false;
+		pSelectt234->moveNext();
+
+		if (brojj == 0) {
+			td::String msgText(tr("BurndownStatistics"));
+			td::String informativeText;
+
+			informativeText.format("Nema dodanih tiketa, nemoguce prikazati statistiku");
+			//informativeText.format("Tim: %s\nBroj gotovih tiketa: %d\nBroj preostalih tiketa: %d\nBrzina obrade tiketa: %g [tezine tiketa po danu]\nPretpostavljeno preostalo vrijeme: %d", ime2, brojGotovih, brojOstalih, k * -1, ukupDana - brojDana);
+
+			showAlert(msgText, informativeText);
+			return true;
+		}
+
+		dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.TimID=?");
 		dp::Params pParamss(pSelectt->allocParams());
-		pParamss << ID1;
+		pParamss << IDTima;
 
 		td::INT4 ukupTez;
 		dp::Columns colss = pSelectt->allocBindColumns(1);
@@ -74,9 +97,9 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 			return false;
 		pSelectt->moveNext();
 
-		dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.ProjekatID=? and s.Stanje!=2");
+		dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.TimID=? and s.Stanje!=2");
 		dp::Params pParamsss(pSelecttt->allocParams());
-		pParamsss << ID1;
+		pParamsss << IDTima;
 
 		td::INT4 sadTez;
 		dp::Columns colsss = pSelecttt->allocBindColumns(1);
@@ -107,11 +130,33 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 		td::Date datum1(god, mjesec, dan);
 
 
-		td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+		//td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 
-		td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
+		td::INT4 brojac;
+		td::Date dkraj2(datum1);
+		for (brojac = 0;; brojac++) {
+			dkraj2 += 1;
+			if (dkraj2 == datum) {
+				brojac++;
+				break;
+			}
+		}
+
+		td::INT4 brojDana = brojac;
+
+		double k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round(-1. * ukupTez / k);
 
+		if (ukupTez == sadTez) {
+			td::String msgText(tr("BurndownStatistics"));
+			td::String informativeText;
+
+			informativeText.format("Nema zavrsenih tiketa, nemoguce prikazati statistiku");
+			//informativeText.format("Tim: %s\nBroj gotovih tiketa: %d\nBroj preostalih tiketa: %d\nBrzina obrade tiketa: %g [tezine tiketa po danu]\nPretpostavljeno preostalo vrijeme: %d", ime2, brojGotovih, brojOstalih, k * -1, ukupDana - brojDana);
+
+			showAlert(msgText, informativeText);
+			return true;
+		}
 		
 		dp::IStatementPtr pSelect0 = dp::getMainDatabase()->createStatement("SELECT t.Ime as Ime FROM Tim t WHERE t.ID=?");
 		dp::Params pParams0(pSelect0->allocParams());
@@ -132,9 +177,9 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 		}
 		ime2[ime1.length()] = '\0';
 
-		dp::IStatementPtr pS = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as sadTez FROM Tiketi s WHERE s.ProjekatID=? and s.stanje=2");
+		dp::IStatementPtr pS = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as sadTez FROM Tiketi s WHERE s.TimID=? and s.stanje=2");
 		dp::Params pP(pS->allocParams());
-		pP << ID1;
+		pP << IDTima;
 
 		td::INT4 brojGotovih,brojOstalih;
 		dp::Columns kol = pS->allocBindColumns(1);
@@ -144,9 +189,9 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 			return false;
 		pS->moveNext();
 
-		dp::IStatementPtr pS2 = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as sadTez1 FROM Tiketi s WHERE s.ProjekatID=? and s.stanje!=2");
+		dp::IStatementPtr pS2 = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as sadTez1 FROM Tiketi s WHERE s.TimID=? and s.stanje!=2");
 		dp::Params pP2(pS2->allocParams());
-		pP2 << ID1;
+		pP2 << IDTima;
 
 		dp::Columns kol2 = pS2->allocBindColumns(1);
 		kol2 << "sadTez1" << brojOstalih;
@@ -155,7 +200,7 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 			return false;
 		pS2->moveNext();
 
-
+		double wow = -1 * k;
 
 		td::String msgText(tr("BurndownStatistics"));
 		td::String informativeText;
@@ -171,6 +216,11 @@ bool ViewStat::onClick(gui::Button* pBtn) {
 bool ViewStat::onChangedSelection(gui::DBComboBox* combo) {
 
 	if (combo == &_Ttim) {
+		auto x = _Ttim.getNoOfItems();
+		if (_Ttim.getNoOfItems() == 0) {
+			return false;
+		}
+
 		td::Variant val;
 		_Ttim.getValue(val);
 		td::INT4 IDTima = val.i4Val();
@@ -187,21 +237,37 @@ bool ViewStat::onChangedSelection(gui::DBComboBox* combo) {
 			return false;
 		pSelect1->moveNext();
 
-		dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
+		dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as brojj FROM Tiketi s WHERE s.TimID=?");
 		dp::Params pParamss(pSelectt->allocParams());
-		pParamss << ID1;
+		pParamss << IDTima;
 
-		td::INT4 ukupTez;
+		td::INT4 ukupTez, brojj;
 		dp::Columns colss = pSelectt->allocBindColumns(1);
-		colss << "ukupTez" << ukupTez;
+		colss << "brojj"<<brojj;
 
 		if (!pSelectt->execute())
 			return false;
 		pSelectt->moveNext();
 
-		dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.ProjekatID=? and s.Stanje!=2");
+		if (brojj == 0) {
+			_Graf.StaviTacke(0, 0, 0, 0, -1);
+			return true;
+		}
+
+		dp::IStatementPtr pSelectt23 = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.TimID=?");
+		dp::Params pParamss23(pSelectt23->allocParams());
+		pParamss23 << IDTima;
+
+		dp::Columns colss23 = pSelectt23->allocBindColumns(1);
+		colss23 << "ukupTez" << ukupTez;
+
+		if (!pSelectt23->execute())
+			return false;
+		pSelectt23->moveNext();
+
+		dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.TimID=? and s.Stanje!=2");
 		dp::Params pParamsss(pSelecttt->allocParams());
-		pParamsss << ID1;
+		pParamsss << IDTima;
 
 		td::INT4 sadTez;
 		dp::Columns colsss = pSelecttt->allocBindColumns(1);
@@ -232,12 +298,29 @@ bool ViewStat::onChangedSelection(gui::DBComboBox* combo) {
 		td::Date datum1(god, mjesec, dan);
 
 
-		td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+		//td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+
+		td::INT4 brojac;
+		td::Date dkraj2(datum1);
+		for (brojac = 0;; brojac++) {
+			dkraj2 += 1;
+			if (dkraj2 == datum) {
+				brojac++;
+				break;
+			}
+		}
+
+		td::INT4 brojDana = brojac;
 
 		td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round( - 1. * ukupTez / k);
 
-		_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+		if (ukupTez==sadTez) {
+			_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 0);
+			return true;
+		}
+
+		_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 1);
 	}
 	return true;
 }
@@ -262,21 +345,38 @@ void ViewStat::refresh() {
 		return;
 	pSelect1->moveNext();
 
-	dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.ProjekatID=?");
+	dp::IStatementPtr pSelectt = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as brojj FROM Tiketi s WHERE s.TimID=?");
 	dp::Params pParamss(pSelectt->allocParams());
-	pParamss << ID1;
+	pParamss << IDTima;
 
-	td::INT4 ukupTez;
+	td::INT4 ukupTez, brojj;
 	dp::Columns colss = pSelectt->allocBindColumns(1);
-	colss << "ukupTez" << ukupTez;
+	colss << "brojj" << brojj;
 
 	if (!pSelectt->execute())
 		return;
 	pSelectt->moveNext();
 
-	dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.ProjekatID=? and s.Stanje!=2");
+	if (brojj == 0) {
+		_Graf.StaviTacke(0, 0, 0, 0, -1);
+		return;
+	}
+
+	dp::IStatementPtr pSelectt23 = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as ukupTez FROM Tiketi s WHERE s.TimID=?");
+	dp::Params pParamss23(pSelectt23->allocParams());
+	pParamss23 << IDTima;
+
+	dp::Columns colss23 = pSelectt23->allocBindColumns(1);
+	colss23 << "ukupTez" << ukupTez;
+
+	if (!pSelectt23->execute())
+		return;
+	pSelectt23->moveNext();
+
+
+	dp::IStatementPtr pSelecttt = dp::getMainDatabase()->createStatement("SELECT SUM(s.Tezina) as sadTez FROM Tiketi s WHERE s.TimID=? and s.Stanje!=2");
 	dp::Params pParamsss(pSelecttt->allocParams());
-	pParamsss << ID1;
+	pParamsss << IDTima;
 
 	td::INT4 sadTez;
 	dp::Columns colsss = pSelecttt->allocBindColumns(1);
@@ -307,12 +407,50 @@ void ViewStat::refresh() {
 	td::Date datum1(god, mjesec, dan);
 
 
-	td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+	//td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
+
+	td::INT4 brojac;
+	td::Date dkraj2(datum1);
+	for (brojac = 0;; brojac++) {
+		dkraj2 += 1;
+		if (dkraj2 == datum) {
+			brojac++;
+			break;
+		}
+	}
+
+	td::INT4 brojDana = brojac;
 
 	td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 	td::INT4 ukupDana = std::round(-1. * ukupTez / k);
 
-	_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+	if (ukupTez == sadTez) {
+		_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 0);
+		return;
+	}
+
+	_Graf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 1);
+	
+
+	//_Ttim.clean();
+	//_Ttim.toZero();
+
+	dp::IStatementPtr pSelect234 = _db->createStatement("SELECT ID, Ime as Name FROM Tim WHERE Tim.ID!=-1 and Tim.ProjekatID!=-1");
+	dp::Columns pCols234 = pSelect234->allocBindColumns(2);
+	td::String name234;
+	td::INT4 id234;
+	pCols234 << "ID" << id234 << "Name" << name234;
+	if (!pSelect234->execute())
+		assert(false);
+
+	while (pSelect234->moveNext())
+	{
+		_Ttim.addItem(name234, id234);
+	}
+	_Ttim.selectIndex(0);
+
+
+
 }
 
 
