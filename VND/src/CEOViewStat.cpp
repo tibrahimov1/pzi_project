@@ -120,7 +120,7 @@ bool CEOViewStat::onChangedSelection(gui::DBComboBox* combo) {
 		double k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round(-1. * ukupTez / k);
 
-		_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+		_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 0);
 
 		{
 			td::Variant val;
@@ -150,7 +150,7 @@ bool CEOViewStat::onChangedSelection(gui::DBComboBox* combo) {
 			td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 			td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 			td::INT4 ukupDana = std::round(-1. * ukupTez / k);
-			_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+			_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 0);
 
 			td::Date novi = datum1 + ukupDana;
 			td::INT4 dan1 = novi.getDay(), mjesec1 = novi.getMonth(), god1 = novi.getYear();

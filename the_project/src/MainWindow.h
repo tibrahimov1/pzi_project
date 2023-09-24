@@ -35,7 +35,7 @@ public:
     {
         setTitle(tr("appTitle"));
         _mainMenuBar.setAsMain(this);
-        setToolBar(_toolBar);
+        setToolBar(_newToolBar);
         setCentralView(&_initView);
     }
     
@@ -115,23 +115,6 @@ protected:
     {
         switch (actionID)
         {
-        case 10:
-        {
-            //prikazi view za projekte
-            //_view.setNavigatorSelection(0);
-            //_viewPM.setNavigatorSelection(0);
-            _initView.dajTo(Globals::_currentUserID,1);
-            return true;
-        }
-
-        case 20:
-        {
-            //prikazi view za uposlenike
-            //_view.setNavigatorSelection(1);
-            //_viewPM.setNavigatorSelection(1);
-            _initView.dajTo(Globals::_currentUserID,2);
-            return true;
-        }
         case 30:
         {
             //prikazi view za zahtjeve
@@ -147,12 +130,6 @@ protected:
     {
         switch (actionID)
         {
-        case 10:
-        {
-            //prikazi Pretraga view
-            _initView.dajTo(Globals::_currentUserID, 4);
-            return true;
-        }
 
         case 20:
         {
@@ -164,6 +141,7 @@ protected:
         default:
             return false;
         }
+        return true;
     }
     
 };
