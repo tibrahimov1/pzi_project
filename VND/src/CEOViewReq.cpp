@@ -127,8 +127,19 @@ bool CEOViewReq::onChangedSelection(gui::TableEdit* pTE)
 		_lod.setValue(row[0]);
 		_lproj.setValue(row[1]);
 		_lpoz.setValue(row[2]);
-		_Ddate.setValue(row[3]);
 		_lz.setValue(row[4]);
+
+		td::INT4 dan, mjesec, god;
+		td::String a, a1;
+		a = row[3];
+		a1 = a.subStr(0, 1);
+		dan = a1.toINT4();
+		a1 = a.subStr(3, 4);
+		mjesec = a1.toINT4();
+		a1 = a.subStr(5, 8);
+		god = a1.toINT4();
+		td::Date datum(god, mjesec, dan);
+		_Ddate.setValue(datum);
 
 		return true;
 	}
