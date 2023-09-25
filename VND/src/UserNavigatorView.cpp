@@ -26,3 +26,7 @@ bool UserNavigatorView::onChangedSelection(gui::Navigator* pNav)
 	_switcherUser.onChangedView((int)currSelection);
 	return true;
 }
+void UserNavigatorView::setNavigatorSelection(td::INT4 sel) {
+	_nav.setCurrentSelection(sel);
+	_switcherUser.showView((int)sel);
+}

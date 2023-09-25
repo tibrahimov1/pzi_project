@@ -58,7 +58,9 @@ public:
 			_viewPM.setNavigatorSelection(sel2);
 		}
 		else {
-			//_viewUser.setNavigatorSelection(sel2);
+			if (sel2 == 3) sel2 = 0;
+			else if (sel2 == 5) sel2 = 2;
+			_viewUser.setNavigatorSelection(sel2);
 		}
 	}
 };

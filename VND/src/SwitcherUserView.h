@@ -30,6 +30,7 @@ public:
         _viewStatUser.populateData();
     }
     void onChangedView(int currSelection) {
+        _viewStatUser.updateVelo();
         showView((int)currSelection);
     }
 };

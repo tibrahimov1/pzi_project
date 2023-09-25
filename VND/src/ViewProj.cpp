@@ -32,12 +32,7 @@ ViewProj::ViewProj() :
 	, _Ttim(td::int4)
 	, _addTim(tr("AddTeam"))
 {
-	/*_h1.append(_pok1);
-	_h1.append(_pok2);
-	_h2.append(_pok3);
-	_h2.append(_pok4);
-	_h3.append(_pok5);
-	_h3.append(_pok6);*/
+
 	_Vvert.append(_pok1);
 	_Vvert.append(_pok4);
 	_Vvert.append(_pok2);
