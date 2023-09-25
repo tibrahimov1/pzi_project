@@ -15,7 +15,7 @@ CEOViewSrch::CEOViewSrch() :
 	, _prog(tr("Prog"))
 	, _spec(tr("Spec"))
 	, _btnFile(tr("OpFile"))
-	, _ucitaj("Ucitaj")
+	, _ucitaj(tr("Load"))
 	, _db(dp::getMainDatabase())
 	, _Nnum(td::int4, gui::LineEdit::Messages::DoNotSend)
 	, _lpod(td::int4, gui::LineEdit::Messages::DoNotSend)

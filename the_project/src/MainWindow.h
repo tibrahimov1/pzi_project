@@ -35,7 +35,7 @@ public:
     {
         setTitle(tr("appTitle"));
         _mainMenuBar.setAsMain(this);
-        setToolBar(_toolBar);
+        setToolBar(_newToolBar);
         setCentralView(&_initView);
     }
     
@@ -60,14 +60,21 @@ protected:
     }
     void setView() {
 
-        if (Globals::_currentUserID == 1)
+        dp::IStatementPtr pstat1 = dp::getMainDatabase()->createStatement("SELECT TipID FROM Korisnik WHERE ID=?");
+        dp::Params params(pstat1->allocParams());
+        dp::Columns cols(pstat1->allocBindColumns(1));
+        params << Globals::_currentUserID;
+        td::INT4 tipid;
+        cols << "TipID" << tipid;
+        pstat1->execute();
+        pstat1->moveNext();
+
+
+
+        if (tipid == 1)
             _initView.showCEO(); //for now only change to CEO
-        else if (Globals::_currentUserID == 2) {
+        else if (tipid == 2) {
             _initView.showPM();
-            //_toolBar.hide(true);
-            //NewToolBar mak();
-            //setToolBar(mak);
-            //mak.show(true);
         }
         else {
             _initView.showUser();
@@ -115,23 +122,6 @@ protected:
     {
         switch (actionID)
         {
-        case 10:
-        {
-            //prikazi view za projekte
-            //_view.setNavigatorSelection(0);
-            //_viewPM.setNavigatorSelection(0);
-            _initView.dajTo(Globals::_currentUserID,1);
-            return true;
-        }
-
-        case 20:
-        {
-            //prikazi view za uposlenike
-            //_view.setNavigatorSelection(1);
-            //_viewPM.setNavigatorSelection(1);
-            _initView.dajTo(Globals::_currentUserID,2);
-            return true;
-        }
         case 30:
         {
             //prikazi view za zahtjeve
@@ -147,12 +137,6 @@ protected:
     {
         switch (actionID)
         {
-        case 10:
-        {
-            //prikazi Pretraga view
-            _initView.dajTo(Globals::_currentUserID, 4);
-            return true;
-        }
 
         case 20:
         {
@@ -164,6 +148,7 @@ protected:
         default:
             return false;
         }
+        return true;
     }
     
 };

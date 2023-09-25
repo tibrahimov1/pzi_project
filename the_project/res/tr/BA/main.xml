@@ -61,5 +61,15 @@
 	  <Res id="Prolong" tr="Zakašnjenje:"/>
 	  <Res id="BrSpeed" tr="Burndown brzina:"/>
 	  <Res id="AddTeam" tr="Dodaj Tim:"/>
+     <Res id="tard" tr="Zakašnjenje:"/>
+     <Res id="BurnSpeed" tr="Burndown brzina:"/>
+     <Res id="tard" tr="Zakašnjenje:"/>
+     <Res id="EndDate" tr="Datum završetka rada:"/>
+     <Res id="StartDate" tr="Datum početka"/>
+     <Res id="Load" tr="Učitaj"/>
+     <Res id="Velo:" tr="Lični velocity:"/>
+     <Res id="appTitle" tr="Project Managing Software"/>
+
+
 	</Translations>
 </DevRes>

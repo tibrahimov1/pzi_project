@@ -15,23 +15,18 @@ ViewTick::ViewTick() :
 	, _Dtezina(td::int4)
 	//, _btnDok("<path>")
 	, _btnTik(tr("AddTick"))
-	//, _Ttim(td::int4)
 	, _Hlbtn(4)
 	, _btnSac(tr("Save"))
 	//, _btnUc("Ucitaj")
 	, _btnPon(tr("Discard"))
 	, _btnDel(tr("Delete"))
-	//, _statnaz("Status")
-	//, _Status(td::int4)
+
 	, _db(dp::getMainDatabase())
 {
 	_Hlbtn.append(_btnSac);
 	//_Hlbtn.append(_btnUc);
 	_Hlbtn.append(_btnPon);
 	_Hlbtn.append(_btnDel);
-	//_Hlbtn.appendSpacer();
-	//_Hlbtn.append(_statnaz);
-	//_Hlbtn.append(_Status);
 
 	gui::GridComposer gc(_gl);
 	gc.appendRow(_tiket);

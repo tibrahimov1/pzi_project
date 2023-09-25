@@ -13,9 +13,9 @@ CEOViewStat::CEOViewStat() :
 	, _h1(2)
 	, _h2(2)
 	, _h3(3)
-	, _pok1("Ocekivano vrijeme zavrsetka: ")
-	, _pok2("Zakasnjenje: ")
-	, _pok3("Burdown brzina: ")
+	, _pok1(tr("ExpEnd"))
+	, _pok2(tr("tard"))
+	, _pok3(tr("BurnSpeed"))
 	, _pok5(td::int4)
 	, _pok6(td::decimal4)
 	, _tim("Projekat: ")
@@ -120,7 +120,7 @@ bool CEOViewStat::onChangedSelection(gui::DBComboBox* combo) {
 		double k = (sadTez - ukupTez) / 1. / brojDana;
 		td::INT4 ukupDana = std::round(-1. * ukupTez / k);
 
-		_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+		_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 1);
 
 		{
 			td::Variant val;
@@ -150,7 +150,7 @@ bool CEOViewStat::onChangedSelection(gui::DBComboBox* combo) {
 			td::INT4 brojDana = datum.getNoOfDays() - datum1.getNoOfDays();
 			td::Decimal4 k = (sadTez - ukupTez) / 1. / brojDana;
 			td::INT4 ukupDana = std::round(-1. * ukupTez / k);
-			_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana);
+			_Ggraf.StaviTacke(ukupTez, sadTez, brojDana, ukupDana, 1);
 
 			td::Date novi = datum1 + ukupDana;
 			td::INT4 dan1 = novi.getDay(), mjesec1 = novi.getMonth(), god1 = novi.getYear();

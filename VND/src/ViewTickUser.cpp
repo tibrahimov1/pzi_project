@@ -71,13 +71,28 @@ void ViewTickUser::populateData() {
 	}
 	else
 	{
+		dp::IStatementPtr statement = _db->createStatement("SELECT TimID FROM Korisnik WHERE ID=?");
+		dp::Params params(statement->allocParams());
+		params << Globals::_currentUserID;
+		dp::Columns colms(statement->allocBindColumns(1));
+		td::INT4 timid;
+		colms << "TimID" << timid;
+		if (!statement->execute())
+			return;
+		if (!statement->moveNext())
+			return;
+
 		_pDS = _db->createDataSet("SELECT a.ID, a.Stanje, a.Tezina, a.Opis, CASE "
 			"WHEN a.Stanje = 0 THEN 'Dostupan' "
 			"WHEN a.Stanje = 1 THEN 'Zauzet' "
 			"WHEN a.Stanje = 2 THEN 'Zavrsen' "
 			"ELSE 'Neispravan' "
 			"END AS Status "
-			"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND a.ProjekatID = c.ProjekatID AND b.TimID = c.ID AND b.TipID = 3");
+			"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND"
+			" a.ProjekatID = c.ProjekatID AND b.TimID = c.ID AND b.TipID = 3" 
+			" AND b.TimID = a.TimID AND b.ID=? AND b.TimID=?");
+		dp::Params params3(_pDS->allocParams());
+		params3 << Globals::_currentUserID << timid;
 		dp::DSColumns cols(_pDS->allocBindColumns(5));
 		cols << "ID" << td::int4 << "Stanje" << td::int4 << "Tezina" << td::int4 << "Opis" << td::string8 << "Status" << td::string8;
 		if (!_pDS->execute())
@@ -93,19 +108,18 @@ void ViewTickUser::populateData() {
 bool ViewTickUser::onClick(gui::Button* pBtn) {
 	const char* p[3] = { "Dostupan","Zauzet","Zavrsen" };
 	if (pBtn == &_btn) {
-		dp::IDataSet::Row &cr = _te.getCurrentRow();
+		dp::IDataSet::Row &cr = _te.getCurrentRow(); //cr-current row
 		if(cr[1] < 2)
 		{
 			cr[1] = cr[1] + 1;
-			cr[4] = p[ cr[1].i4Val() ]; //nadajmo se da ovo radi AAAAl me tpira laganini ovo ono
+			cr[4] = p[ cr[1].i4Val() ]; 
 		}
 		_te.updateRow(_te.getFirstSelectedRow());
 		onChangedSelection(&_te);
-
+		savetoDB(); //check this
 		if (cr[1] == 1)
 		{
 			//have to uncomment this
-			//savetoDB();
 			dp::IDataSet* pDS = _te.getDataSet();
 			//remove all but one
 			for (td::INT4 i = 0; i < pDS->getNumberOfRows(); i = i + 1) {
@@ -121,6 +135,18 @@ bool ViewTickUser::onClick(gui::Button* pBtn) {
 		}		
 		if (cr[1] == 2) {
 			dp::IDataSet* pDS = _te.getDataSet();
+			//get params
+			dp::IStatementPtr statement = _db->createStatement("SELECT TimID FROM Korisnik WHERE ID=?");
+			dp::Params params(statement->allocParams());
+			params << Globals::_currentUserID;
+			dp::Columns colms(statement->allocBindColumns(1));
+			td::INT4 timid;
+			colms << "TimID" << timid;
+			if (!statement->execute())
+				return false;
+			if (!statement->moveNext())
+				return false;
+
 			//add rows like in populatedata
 			_pDS = _db->createDataSet("SELECT a.ID, a.Stanje, a.Tezina, a.Opis, CASE "
 				"WHEN a.Stanje = 0 THEN 'Dostupan' "
@@ -128,21 +154,28 @@ bool ViewTickUser::onClick(gui::Button* pBtn) {
 				"WHEN a.Stanje = 2 THEN 'Zavrsen' "
 				"ELSE 'Neispravan' "
 				"END AS Status "
-				"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0 AND a.ProjekatID = c.ProjekatID AND b.TimID = c.ID AND b.TipID = 3");
+				"FROM Tiketi a, Korisnik b, Tim c WHERE a.Stanje = 0"
+				" AND a.ProjekatID = c.ProjekatID AND b.TimID = c.ID"
+				" AND a.TimID=b.TimID AND b.TipID = 3 AND b.ID=? AND b.TimID=?");
 			dp::DSColumns cols(_pDS->allocBindColumns(5));
+			dp::Params params2(_pDS->allocParams());
+			params2 << Globals::_currentUserID << timid;
 			cols << "ID" << td::int4 << "Stanje" << td::int4 << "Tezina" << td::int4 << "Opis" << td::string8 << "Status" << td::string8;
 			if (!_pDS->execute())
 			{
 				_pDS = nullptr;
 				return true;
 			}
+
+
 			_te.beginUpdate();
 			_te.removeRow(_te.getFirstSelectedRow());
 			for (td::INT4 i = 0; i < _pDS->getNumberOfRows(); i++) {
 				int iRow = _te.getFirstSelectedRow() + 1;
 				if (iRow < 0)
 					iRow = 0;
-				td::INT4 tickID = _pDS->getRow(iRow)[0].i4Val(); //o ovom razmislit
+
+				//td::INT4 tickID = _pDS->getRow(iRow)[0].i4Val(); //o ovom razmislit
 				auto& row = _te.getEmptyRow();
 				auto& fullrow = _pDS->getRow(i);
 				row = fullrow;

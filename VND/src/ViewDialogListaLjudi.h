@@ -34,7 +34,7 @@ public:
 
 	ViewDialogListaLjudi() :
 		_gl(3, 3)
-		, _TeamName(tr("Team Name"))
+		, _TeamName(tr("TeamName"))
 		, _Combo(td::int4)
 		, _Korisnici(td::int4)
 		, _btnDodaj(tr("Dodaj"))
