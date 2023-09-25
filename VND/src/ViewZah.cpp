@@ -11,8 +11,6 @@ ViewZah::ViewZah() :
 	, _dat(tr("rDate"))
 	//, _Ddat(td::int4)
 	, _status(tr("Status"))
-	//, _btnDok("<path>")
-	//, _btnUc("Ucitaj")
 	, _btnZah(tr("NewReq"))
 	, _btnOdg(tr("ReqAnswer"))
 	, _Hlbtn(3)

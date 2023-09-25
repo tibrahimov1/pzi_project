@@ -20,4 +20,5 @@ public:
 	UserNavigatorView();
 	void refresh(td::INT4 arg);
 	bool onChangedSelection(gui::Navigator* pNav);
+	void setNavigatorSelection(td::INT4 sel);
 };

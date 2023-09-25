@@ -17,23 +17,20 @@ protected:
     void populateMenuControl()
     {
         auto& items = menuControl.getItems();
-        items[0].initAsActionItem(tr("Projects"), 10);
-        items[1].initAsActionItem(tr("Employees"), 20);
-        items[2].initAsActionItem(tr("Requests"), 30);
+        items[0].initAsActionItem(tr("Requests"), 30);
     }
 
     void populateMenuRecap()
     {
         auto& items = menuRecap.getItems();
-        items[0].initAsActionItem(tr("Search"), 10);
-        items[1].initAsActionItem(tr("Statistics"), 20);
+        items[0].initAsActionItem(tr("Statistics"), 20);
     }
 public:
     MenuBar()
     : gui::MenuBar(3) 
     , menuApp(10, tr("App"), 1) 
-    , menuControl(20, tr("Control"), 3)
-    , menuRecap(30, tr("Recap"), 2)
+    , menuControl(20, tr("Control"), 1)
+    , menuRecap(30, tr("Recap"), 1)
     {
         populateMenuApp();
         populateMenuControl();

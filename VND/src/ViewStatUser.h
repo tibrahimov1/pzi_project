@@ -65,9 +65,10 @@ public:
 		//velo racunamo koliko je radnik do sad uradio, prodji kroz tikete i saberi tezine
 		updateVelo();
 		//hvatamo sve tikete na timu 
+
 		if (Globals::_currentUserID == -1)
 			return;
-		_graf.StaviTacke(100, 40, 48, 80);
+		_graf.StaviTacke(100, 40, 48, 80, 0);
 	}
 	void updateVelo() {
 		dp::IStatementPtr pStat = _db->createStatement("SELECT a.Tezina FROM Tiketi a, Korisnik b, Tim c WHERE "
