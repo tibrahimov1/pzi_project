@@ -222,7 +222,7 @@ void ViewProj::populateData(td::INT4 type) {
 	_Ename.setValue(ProjName);
 	_Ddate.setValue(DatumPoc);
 	_DfinDate.setValue(DatumKraj);
-	_Nnum.setValue(BrClanova);
+	//_Nnum.setValue(BrClanova);
 	_Sspec.setValue(Opis);
 
 	if (type == 1) {
@@ -237,6 +237,38 @@ void ViewProj::populateData(td::INT4 type) {
 		if (!pSelect1->execute())
 			return;
 		pSelect1->moveNext();
+
+		dp::IStatementPtr pSelect1d = dp::getMainDatabase()->createStatement("SELECT count(t.ProjekatID) as CountFR from Tim t where t.ProjekatID=?");
+		dp::Params pParams2d(pSelect1d->allocParams());
+		pParams2d << ID1;
+
+		dp::Columns cols1d = pSelect1d->allocBindColumns(1);
+		td::INT4 CountFR;
+		cols1d << "CountFR" << CountFR;
+
+		if (!pSelect1d->execute())
+			return;
+		pSelect1d->moveNext();
+		
+		if (CountFR == 0) {
+			_Nnum.setValue(CountFR);
+		}
+		else {
+			dp::IStatementPtr pSelect1t = dp::getMainDatabase()->createStatement("SELECT Sum(t.BrClanova) as BrClan from Tim t, Projekti p WHERE t.ProjekatID=p.ID and p.ID=?");
+			dp::Params pParams2t(pSelect1t->allocParams());
+			pParams2t << ID1;
+
+			dp::Columns cols1t = pSelect1t->allocBindColumns(1);
+			td::INT4 BrClan;
+			cols1t << "BrClan" << BrClan;
+
+			if (!pSelect1t->execute())
+				return;
+			pSelect1t->moveNext();
+
+			_Nnum.setValue(BrClan);
+		}
+		
 
 		dp::IStatementPtr pSelectt23 = dp::getMainDatabase()->createStatement("SELECT COUNT(s.Tezina) as brojj FROM Tiketi s WHERE s.ProjekatID=?");
 		dp::Params pParamss23(pSelectt23->allocParams());
