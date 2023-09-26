@@ -23,7 +23,7 @@ protected:
 	
 	gui::LineEdit _stowards;
 	gui::LineEdit _sreq;
-	gui::DateEdit _sdate;
+	gui::LineEdit _sdate;
 	gui::LineEdit _sstatus;
 
 	gui::Button _hidbtn;

@@ -86,7 +86,8 @@ public:
 		_sreq.getValue(var);
 		td::Date datum;
 		datum.now();
-		newparams << td::Variant(td::INT4(reqID + 1)) << Globals::_currentUserID << manID << dp::toNCh(var, 40) << datum << td::Variant(0);
+		td::INT4 datumuint = datum.getDay() * 1000000 + datum.getMonth() * 10000 + datum.getYear();
+		newparams << td::Variant(td::INT4(reqID + 1)) << Globals::_currentUserID << manID << dp::toNCh(var, 40) << datumuint << td::Variant(0);
 		if (!pstat->execute())
 			return false;
 

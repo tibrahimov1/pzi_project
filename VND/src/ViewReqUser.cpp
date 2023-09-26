@@ -47,18 +47,34 @@ bool ViewReqUser::onClick(gui::Button* pBtn) {
 void ViewReqUser::populateData() {
 	if (Globals::_currentUserID < 0)
 		return;
-	_pDs = _db->createDataSet("SELECT a.Datum, a.Status, b.Ime, b.Prezime, a.Opis, "
+
+	_pDs = _db->createDataSet("SELECT CASE WHEN a.Datum>0 THEN CAST(a.Datum/1000000 AS TEXT) || '.' || CAST(a.Datum%100000/10000 AS TEXT) || '.' || CAST(a.Datum%10000 AS TEXT) || '.'"
+		" ELSE '0' END AS Date, "
+		
+		
+		"a.Status, b.Ime, b.Prezime, a.Opis, "
+		"CASE WHEN a.Status = 0 THEN 'Primljen' "
+		"WHEN a.Status = 1 THEN 'Odgovoren' "
+		"ELSE 'Problem' "
+		"END AS Stanje "
+		"FROM Zahtjevi a, Korisnik b "
+		"WHERE( a.SenderID = ? OR a.ReceiverID = ?) AND b.ID = a.ReceiverID"
+	);
+
+
+
+	/*_pDs = _db->createDataSet("SELECT a.Datum, a.Status, b.Ime, b.Prezime, a.Opis, "
 													"CASE WHEN a.Status = 0 THEN 'Primljen' "
 													"WHEN a.Status = 1 THEN 'Odgovoren' "
 													"ELSE 'Problem' "
 													"END AS Stanje "
 													"FROM Zahtjevi a, Korisnik b "
 													"WHERE( a.SenderID = ? OR a.ReceiverID = ?) AND b.ID = a.ReceiverID"
-	);
+	);*/
 	dp::Params params = _pDs->allocParams();
 	params << Globals::_currentUserID << Globals::_currentUserID;
 	dp::DSColumns cols(_pDs->allocBindColumns(6));
-	cols << "Datum" << td::date << "Status" << td::int4 << "Ime" << td::string8 << "Prezime" << td::string8 << "Opis" << td::string8 << "Stanje" << td::string8;
+	cols << "Date" << td::string8 << "Status" << td::int4 << "Ime" << td::string8 << "Prezime" << td::string8 << "Opis" << td::string8 << "Stanje" << td::string8;
 	if (!_pDs->execute()) {
 		_pDs = nullptr;
 		return;
@@ -83,19 +99,24 @@ bool ViewReqUser::onChangedSelection(gui::TableEdit* pTe) {
 	return true;
 }
 void ViewReqUser::refresh() {
-	dp::IStatementPtr sStat = _db->createStatement("SELECT a.Datum, a.Status, b.Ime, b.Prezime, a.Opis, "
-													"CASE WHEN a.Status = 0 THEN 'Primljen' "
-													"WHEN a.Status = 1 THEN 'Odgovoren' "
-													"ELSE 'Problem' "
-													"END AS Stanje "
-													"FROM Zahtjevi a, Korisnik b "
-													"WHERE( a.SenderID = ? OR a.ReceiverID = ?) AND b.ID = a.ReceiverID");
+	dp::IStatementPtr sStat = _db->createStatement("SELECT CASE WHEN a.Datum>0 THEN CAST(a.Datum/1000000 AS TEXT) || '.' || CAST(a.Datum%100000/10000 AS TEXT) || '.' || CAST(a.Datum%10000 AS TEXT) || '.'"
+		" ELSE '0' END AS Date, "
+
+
+		"a.Status, b.Ime, b.Prezime, a.Opis, "
+		"CASE WHEN a.Status = 0 THEN 'Primljen' "
+		"WHEN a.Status = 1 THEN 'Odgovoren' "
+		"ELSE 'Problem' "
+		"END AS Stanje "
+		"FROM Zahtjevi a, Korisnik b "
+		"WHERE( a.SenderID = ? OR a.ReceiverID = ?) AND b.ID = a.ReceiverID"
+	);
 	dp::Params params(sStat->allocParams());
 	dp::Columns cols(sStat->allocBindColumns(6));
-	td::Date datum;
+	td::String datum;
 	td::INT4 status;
 	td::String ime, prezime, stanje, opis;
-	cols << "Datum" << datum << "Status" << status << "Ime" << ime << "Prezime" << prezime << "Opis" << opis << "Stanje" << stanje;
+	cols << "Date" << datum << "Status" << status << "Ime" << ime << "Prezime" << prezime << "Opis" << opis << "Stanje" << stanje;
 	params << Globals::_currentUserID;
 	if (!sStat->execute()) {
 		return;
